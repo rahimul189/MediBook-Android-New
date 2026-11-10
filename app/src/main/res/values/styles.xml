@@ -1,0 +1,156 @@
+<resources>
+    <style name="Widget.MediBook.Input" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/radius_control</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_control</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_control</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_control</item>
+        <item name="android:layout_marginTop">@dimen/space_lg</item>
+    </style>
+
+    <!-- Autocomplete needs its own overlay, not the generic outlined editTextStyle. -->
+    <style name="Widget.MediBook.ExposedDropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.MediBook.ExposedDropdown</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_control</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_control</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_control</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_control</item>
+        <item name="android:layout_marginTop">@dimen/space_lg</item>
+    </style>
+
+    <style name="ThemeOverlay.MediBook.ExposedDropdown" parent="ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox">
+        <item name="autoCompleteTextViewStyle">@style/Widget.MediBook.DropdownText</item>
+    </style>
+
+    <style name="Widget.MediBook.DropdownText" parent="Widget.Material3.AutoCompleteTextView.OutlinedBox">
+        <item name="android:textColor">@color/input_text</item>
+    </style>
+
+    <style name="Widget.MediBook.PrimaryButton" parent="Widget.Material3.Button">
+        <item name="cornerRadius">@dimen/radius_control</item>
+        <item name="android:minHeight">@dimen/control_height</item>
+        <item name="android:layout_marginTop">@dimen/space_xxl</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:singleLine">false</item>
+    </style>
+
+    <style name="Widget.MediBook.TextButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">@dimen/touch_target</item>
+        <item name="android:textColor">@color/action_text</item>
+        <item name="android:singleLine">false</item>
+    </style>
+
+    <style name="Widget.MediBook.SecondaryButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/radius_control</item>
+        <item name="android:minHeight">@dimen/touch_target</item>
+        <item name="android:textColor">@color/action_text</item>
+        <item name="android:singleLine">false</item>
+        <item name="iconSize">@dimen/icon_size</item>
+    </style>
+
+    <style name="Widget.MediBook.PickerButton" parent="Widget.MediBook.SecondaryButton">
+        <item name="android:minHeight">@dimen/control_height</item>
+        <item name="android:layout_marginTop">@dimen/space_lg</item>
+    </style>
+
+    <style name="Widget.MediBook.DestructiveButton" parent="Widget.MediBook.SecondaryButton">
+        <item name="android:textColor">@color/destructive_text</item>
+        <item name="strokeColor">@color/destructive_text</item>
+        <item name="iconTint">@color/destructive_text</item>
+        <item name="rippleColor">@color/medibook_error_container</item>
+    </style>
+
+    <style name="Widget.MediBook.DestructiveTextButton" parent="Widget.MediBook.TextButton">
+        <item name="android:textColor">@color/destructive_text</item>
+        <item name="iconTint">@color/destructive_text</item>
+    </style>
+
+    <style name="Widget.MediBook.DialogDestructiveButton" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/destructive_text</item>
+    </style>
+
+    <style name="ThemeOverlay.MediBook.DestructiveDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.MediBook.DialogDestructiveButton</item>
+    </style>
+
+    <style name="Widget.MediBook.Progress.Action" parent="Widget.Material3.CircularProgressIndicator">
+        <item name="android:layout_width">@dimen/progress_host</item>
+        <item name="android:layout_height">@dimen/progress_host</item>
+        <item name="indicatorSize">@dimen/progress_action</item>
+        <item name="indicatorInset">0dp</item>
+        <item name="trackThickness">@dimen/progress_track</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="Widget.MediBook.Progress.Session" parent="Widget.MediBook.Progress.Action">
+        <item name="indicatorSize">@dimen/progress_session</item>
+    </style>
+
+    <style name="Widget.MediBook.Progress.Page" parent="Widget.MediBook.Progress.Action">
+        <item name="android:layout_width">@dimen/progress_page_host</item>
+        <item name="android:layout_height">@dimen/progress_page_host</item>
+        <item name="indicatorSize">@dimen/progress_page</item>
+    </style>
+
+    <style name="Widget.MediBook.Slot" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="android:minHeight">@dimen/control_height</item>
+        <item name="android:padding">@dimen/space_md</item>
+        <item name="android:background">@drawable/slot_background</item>
+        <item name="android:textColor">@color/slot_text</item>
+        <item name="android:textAppearance">@style/TextAppearance.MediBook.BodyStrong</item>
+    </style>
+
+    <style name="Widget.MediBook.Status" parent="Widget.Material3.Chip.Assist">
+        <item name="android:textAppearance">@style/TextAppearance.MediBook.Label</item>
+        <item name="android:textColor">@color/medibook_teal_dark</item>
+        <item name="chipBackgroundColor">@color/medibook_teal_container</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="android:checkable">false</item>
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+    </style>
+
+    <style name="Widget.MediBook.AuthCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardCornerRadius">@dimen/radius_card</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/medibook_blue_container</item>
+    </style>
+
+    <style name="Widget.MediBook.FeatureCard" parent="Widget.MediBook.AuthCard">
+        <item name="cardCornerRadius">@dimen/radius_feature</item>
+    </style>
+
+    <style name="TextAppearance.MediBook.Heading" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">@color/medibook_text</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.MediBook.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/medibook_text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.MediBook.Section" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/medibook_text</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.MediBook.CardTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/medibook_text</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.MediBook.BodyStrong" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/medibook_text</item>
+    </style>
+
+    <style name="TextAppearance.MediBook.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">@color/medibook_text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.MediBook.Error" parent="TextAppearance.MediBook.Body">
+        <item name="android:textColor">@color/medibook_error</item>
+    </style>
+</resources>

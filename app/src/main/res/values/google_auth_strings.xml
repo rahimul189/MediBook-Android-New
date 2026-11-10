@@ -1,0 +1,30 @@
+<resources>
+    <string name="google_continue">Continue with Google</string>
+    <string name="google_connect">Connect Google Account</string>
+    <string name="google_connecting">Connecting Google…</string>
+    <string name="google_already_linked">Google Account connected</string>
+    <string name="google_connected">Google is connected to this existing account. Your UID and patient records are unchanged.</string>
+    <string name="google_existing_account_hint">Already use email/password? Sign in first, then connect Google from Edit Profile to keep your existing records.</string>
+    <string name="google_error_configuration">Google sign-in is not configured for this app yet. Use email/password, or complete the Firebase provider and OAuth setup.</string>
+    <string name="google_error_no_credential">No Google account was available. Add an account on this device and try again, or use email/password.</string>
+    <string name="google_error_invalid">The Google credential could not be verified. Please choose your account again.</string>
+    <string name="google_error_unavailable">Google sign-in could not start. Check your connection and Google Play services, then try again.</string>
+    <string name="google_error_conflict">Google could not be safely connected. Sign in to your existing account with its original method, then connect Google from Edit Profile. Accounts and patient records will not be merged.</string>
+    <string name="google_error_email_mismatch">Choose the Google account with exactly the same email as your existing MediBook account. No changes were made.</string>
+    <string name="google_error_reauth">Confirm your current MediBook password before connecting Google. If it expired, sign in again with email/password.</string>
+    <string name="google_error_draining">The previous authentication request is still finishing. No new request has started. Please try again shortly.</string>
+    <string name="google_cancelled">Google account selection cancelled. You can try again.</string>
+    <string name="google_password_title">Confirm your existing account</string>
+    <string name="google_password_message">Enter your current MediBook password, then choose Google with the same email. This connects a sign-in method without moving or merging records.</string>
+    <string name="google_password_confirm">Confirm and continue</string>
+    <string name="google_cancel">Cancel</string>
+    <string name="complete_profile_title">Complete Profile</string>
+    <string name="complete_profile_subtitle">Complete your patient details to continue.</string>
+    <string name="complete_profile_save">Save and Continue</string>
+    <string name="complete_profile_sign_out">Sign out / use an existing account</string>
+    <plurals name="complete_profile_age">
+        <item quantity="one">Age: %1$d year</item>
+        <item quantity="other">Age: %1$d years</item>
+    </plurals>
+    <string name="complete_profile_age_empty">Age is calculated from your date of birth.</string>
+</resources>

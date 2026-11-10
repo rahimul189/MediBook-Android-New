@@ -1,0 +1,11 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.MediBook.FeatureCard" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:orientation="vertical">
+        <TextView android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MediBook.CardTitle" android:textColor="@color/medibook_blue" />
+        <TextView android:id="@+id/value" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" android:textColor="@color/medibook_text" />
+        <TextView android:id="@+id/guidance" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.MediBook.Body" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

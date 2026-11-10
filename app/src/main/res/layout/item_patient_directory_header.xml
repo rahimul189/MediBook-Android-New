@@ -1,0 +1,138 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:paddingBottom="16dp">
+
+    <TextView android:id="@+id/welcomeMessage" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:textColor="@color/medibook_text" android:textStyle="bold" />
+
+    <com.google.android.material.card.MaterialCardView style="@style/Widget.MediBook.FeatureCard"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="16dp">
+            <TextView android:id="@+id/nextHeading" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/next_appointment_heading" android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="@color/medibook_teal_dark" android:textStyle="bold" />
+            <LinearLayout android:id="@+id/nextInformation" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:layout_marginTop="12dp" android:visibility="gone">
+                <TextView android:id="@+id/nextDoctor" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" android:textColor="@color/medibook_text" android:saveEnabled="false" />
+                <TextView android:id="@+id/nextSpecialty" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.MediBook.Body" android:saveEnabled="false" />
+                <TextView android:id="@+id/nextDate" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:textAppearance="@style/TextAppearance.MediBook.Body" android:saveEnabled="false" />
+                <TextView android:id="@+id/nextTime" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.MediBook.Body" android:saveEnabled="false" />
+                <TextView android:id="@+id/nextSlot" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm" android:textColor="@color/medibook_blue"
+                    android:textAppearance="@style/TextAppearance.MediBook.CardTitle" android:saveEnabled="false" />
+                <com.google.android.material.chip.Chip android:id="@+id/nextStatus" style="@style/Widget.MediBook.Status"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs" android:saveEnabled="false" />
+            </LinearLayout>
+            <TextView android:id="@+id/nextMessage" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" android:accessibilityLiveRegion="polite" android:saveEnabled="false"
+                android:text="@string/dashboard_loading" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/nextDetailsButton"
+                style="@style/Widget.MediBook.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/next_view_details" android:visibility="gone" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/nextRetryButton"
+                style="@style/Widget.MediBook.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/doctor_retry_button" android:visibility="gone" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Health & Wellness: one original card at a time, informational only, no card click action. -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/wellnessSection" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_marginTop="20dp">
+
+        <TextView android:id="@+id/wellnessHeading" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:text="@string/patient_wellness_heading"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="@color/medibook_text" android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 2:1 ratio matches the supplied 512x256 cards exactly: no crop, no distortion. -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/healthCarousel" android:layout_width="0dp"
+            android:layout_height="0dp" android:layout_marginTop="12dp"
+            app:layout_constraintDimensionRatio="2:1" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/wellnessHeading" />
+
+        <LinearLayout android:id="@+id/wellnessIndicators" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_marginTop="10dp"
+            android:gravity="center_vertical" android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/healthCarousel">
+            <LinearLayout android:id="@+id/healthCarouselDots" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:gravity="center_vertical"
+                android:importantForAccessibility="no" android:orientation="horizontal"
+                tools:ignore="ContentDescription" />
+            <TextView android:id="@+id/healthCarouselCounter" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_marginStart="10dp"
+                android:accessibilityLiveRegion="polite"
+                android:textAppearance="@style/TextAppearance.MediBook.Body"
+                tools:text="1 / 11" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.card.MaterialCardView style="@style/Widget.MediBook.FeatureCard"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="16dp">
+            <com.google.android.material.button.MaterialButton android:id="@+id/appointmentsButton"
+                style="@style/Widget.MediBook.TextButton" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="@string/appointment_my" app:icon="@drawable/ic_calendar_cross" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/dashboard_patient_appointments" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.example.medibook.views.AdaptiveColumnsLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginTop="8dp">
+        <com.google.android.material.button.MaterialButton android:id="@+id/hospitalButton" style="@style/Widget.MediBook.TextButton"
+            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:singleLine="false" android:paddingStart="@dimen/space_sm" android:paddingEnd="@dimen/space_sm" android:text="@string/call_hospital" app:icon="@drawable/ic_call" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/contactButton" style="@style/Widget.MediBook.TextButton"
+            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:singleLine="false" android:paddingStart="@dimen/space_sm" android:paddingEnd="@dimen/space_sm" android:text="@string/emergency_contact" />
+    </com.example.medibook.views.AdaptiveColumnsLayout>
+    <com.google.android.material.button.MaterialButton android:id="@+id/airQualityButton" style="@style/Widget.MediBook.TextButton"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/air_quality_title" />
+
+
+    <TextView android:id="@+id/directoryHeading" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_marginTop="20dp"
+        android:text="@string/patient_directory_title" android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:textColor="@color/medibook_text" android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchLayout" style="@style/Widget.MediBook.Input"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:hint="@string/patient_search_hint" app:startIconDrawable="@drawable/ic_search" app:endIconMode="clear_text">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchInput" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:inputType="textCapWords" android:imeOptions="actionSearch" android:importantForAutofill="no"
+            android:maxLength="100" android:maxLines="1" android:saveEnabled="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/specializationLayout" style="@style/Widget.MediBook.ExposedDropdown"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:hint="@string/patient_specialization_hint" app:startIconDrawable="@drawable/ic_filter_list"
+        app:endIconMode="dropdown_menu">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/specializationInput" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:inputType="none" android:importantForAutofill="no" android:saveEnabled="false" android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView android:id="@+id/resultCount" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" android:accessibilityLiveRegion="polite"
+        android:textAppearance="@style/TextAppearance.MediBook.Body" android:visibility="gone" />
+
+</LinearLayout>

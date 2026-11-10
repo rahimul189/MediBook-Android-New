@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_date_of_birth_label">Date of birth</string>
+    <string name="profile_gender_label">Gender</string>
+    <string name="error_dob_required">Choose your date of birth.</string>
+    <string name="error_dob_invalid">Enter a valid date of birth that is not in the future.</string>
+    <string name="error_gender_required">Select a gender.</string>
+    <string name="profile_not_provided">Not provided</string>
+    <string name="profile_age_value">Age: %1$d</string>
+    <string name="profile_gender_value">Gender: %1$s</string>
+    <string name="profile_edit_title">Edit Profile</string>
+    <string name="profile_edit_subtitle">Update your personal details. Your email stays linked to your sign-in account.</string>
+    <string name="profile_edit_email_value">Email: %1$s</string>
+    <string name="profile_edit_save">Save changes</string>
+    <string name="profile_edit_saved">Profile updated.</string>
+    <string name="profile_update_failed">Profile could not be updated. Check your connection and try again.</string>
+    <string name="profile_saving">Saving…</string>
+
+    <string name="appointment_patient_heading">Patient information</string>
+    <string name="appointment_patient_name_value">Name: %1$s</string>
+    <string name="appointment_patient_phone_value">Mobile: %1$s</string>
+
+    <!-- PM guidance describes the current (instantaneous) reading only, never a 24-hour average. -->
+    <string name="environment_pm25_low">Fine particles (PM2.5) can reach deep into the lungs. This current reading is low; usual outdoor activity is fine.</string>
+    <string name="environment_pm25_elevated">Fine particles (PM2.5) can reach deep into the lungs. At this current reading, consider reducing prolonged outdoor exertion, especially with asthma, heart or lung disease. A well-fitting N95/FFP2 respirator can help if you must be outdoors.</string>
+    <string name="environment_pm25_high">Fine particles (PM2.5) are high in this current reading. Avoid prolonged outdoor exertion and keep windows closed where possible. Sensitive groups should stay indoors; use a well-fitting N95/FFP2 respirator if going outside is unavoidable.</string>
+    <string name="environment_pm10_low">Coarse inhalable particles (PM10) include dust and pollen. This current reading is low; usual activity is fine.</string>
+    <string name="environment_pm10_elevated">Coarse inhalable particles (PM10) are elevated in this current reading. Limit time in dusty or polluted outdoor areas and avoid strenuous outdoor exercise near traffic or construction.</string>
+    <string name="environment_pm10_high">Coarse inhalable particles (PM10) are high in this current reading. Stay indoors where possible, keep windows closed, and avoid outdoor exercise near dust, traffic or construction.</string>
+</resources>

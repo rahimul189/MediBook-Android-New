@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.admin.AddEditDoctorScheduleActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:menu="@menu/menu_admin_doctors"
+        app:navigationContentDescription="@string/navigate_back"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/schedule_add_button"
+        app:titleTextColor="@color/medibook_text" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/sessionLoading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                style="@style/Widget.MediBook.Progress.Session"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:indicatorSize="24dp" app:trackThickness="3dp"
+                android:indeterminate="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/checking_session"
+                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/adminContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:focusableInTouchMode="true"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.MediBook.AuthCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <LinearLayout
+                            android:id="@+id/errorContent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/schedule_error_heading"
+                                android:textAppearance="@style/TextAppearance.MediBook.Heading" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:text="@string/schedule_error_message"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/backToDoctorsButton"
+                                style="@style/Widget.MediBook.TextButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
+                                android:text="@string/navigate_back" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/formContent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/doctorHeading"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textColor="@color/medibook_teal_dark" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="@string/schedule_form_hint"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+                            <com.google.android.material.progressindicator.CircularProgressIndicator
+                                android:id="@+id/operationProgress"
+                                style="@style/Widget.MediBook.Progress.Action"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="16dp"
+                                android:indeterminate="true"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/operationStatus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:accessibilityLiveRegion="polite"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body"
+                                android:visibility="gone" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/reloadButton"
+                                style="@style/Widget.MediBook.TextButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/schedule_reload_button"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/timezoneHint"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/dayLayout"
+                                style="@style/Widget.MediBook.ExposedDropdown"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/schedule_day_label"
+                                app:endIconMode="dropdown_menu">
+
+                                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                    android:id="@+id/dayInput"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:importantForAutofill="no"
+                                    android:inputType="none"
+                                    android:saveEnabled="false"
+                                    android:maxLines="1" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/startTimeButton"
+                                style="@style/Widget.MediBook.PickerButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
+                                android:minHeight="56dp"
+                                android:text="@string/schedule_choose_start"
+                                app:cornerRadius="12dp"
+                                app:icon="@drawable/ic_schedule_clock" />
+
+                            <TextView
+                                android:id="@+id/startError"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:accessibilityLiveRegion="polite"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body"
+                                android:textColor="@color/medibook_error"
+                                android:visibility="gone" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/endTimeButton"
+                                style="@style/Widget.MediBook.PickerButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
+                                android:minHeight="56dp"
+                                android:text="@string/schedule_choose_end"
+                                app:cornerRadius="12dp"
+                                app:icon="@drawable/ic_schedule_clock" />
+
+                            <TextView
+                                android:id="@+id/endError"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:accessibilityLiveRegion="polite"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body"
+                                android:textColor="@color/medibook_error"
+                                android:visibility="gone" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/slotLayout"
+                                style="@style/Widget.MediBook.Input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/schedule_slot_label"
+                                app:helperText="@string/schedule_slot_hint">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/slotInput"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:importantForAutofill="no"
+                                    android:imeOptions="actionDone"
+                                    android:inputType="number"
+                                    android:saveEnabled="false"
+                                    android:maxLength="3"
+                                    android:maxLines="1" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.materialswitch.MaterialSwitch
+                                android:id="@+id/activeSwitch"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
+                                android:minHeight="48dp"
+                                android:saveEnabled="false"
+                                android:text="@string/schedule_active_label" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="@string/schedule_active_hint"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/saveButton"
+                                style="@style/Widget.MediBook.PrimaryButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/schedule_save_button" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/cancelButton"
+                                style="@style/Widget.MediBook.TextButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cancel_button" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
+</LinearLayout>

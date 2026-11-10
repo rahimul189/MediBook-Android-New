@@ -1,0 +1,88 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+    <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" app:title="@string/appointment_details" app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationContentDescription="@string/navigate_back" />
+    <include android:id="@+id/sessionLoading" layout="@layout/view_patient_session_loading" />
+    <androidx.core.widget.NestedScrollView android:id="@+id/content" android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:visibility="gone" android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+            <com.google.android.material.progressindicator.CircularProgressIndicator android:id="@+id/progress" style="@style/Widget.MediBook.Progress.Page" android:layout_width="48dp"
+                android:layout_height="48dp" android:layout_gravity="center_horizontal" android:indeterminate="true" android:visibility="gone" />
+            <TextView android:id="@+id/message" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:accessibilityLiveRegion="polite" android:saveEnabled="false" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+            <com.google.android.material.card.MaterialCardView android:id="@+id/summaryCard" style="@style/Widget.MediBook.FeatureCard"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:visibility="gone">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/card_content">
+                    <TextView android:id="@+id/details" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:saveEnabled="false" android:textIsSelectable="true"
+                        android:textAppearance="@style/TextAppearance.MediBook.Section" />
+                    <TextView android:id="@+id/detailsSpecialty" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:saveEnabled="false" android:textIsSelectable="true" android:layout_marginTop="@dimen/space_xs" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                    <com.google.android.material.chip.Chip android:id="@+id/appointmentStatus" style="@style/Widget.MediBook.Status"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_sm" android:saveEnabled="false" />
+                    <TextView android:id="@+id/detailsScheduleHeading" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg"
+                        android:text="@string/appointment_schedule_heading" android:textAppearance="@style/TextAppearance.MediBook.CardTitle" />
+                    <TextView android:id="@+id/detailsDate" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:saveEnabled="false" android:textIsSelectable="true" android:layout_marginTop="@dimen/space_sm" android:textAppearance="@style/TextAppearance.MediBook.BodyStrong" />
+                    <TextView android:id="@+id/detailsTime" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:saveEnabled="false" android:textIsSelectable="true" android:layout_marginTop="@dimen/space_xs" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                    <TextView android:id="@+id/detailsSlot" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:saveEnabled="false" android:textIsSelectable="true" android:layout_marginTop="@dimen/space_lg"
+                        android:textAppearance="@style/TextAppearance.MediBook.CardTitle" android:textColor="@color/medibook_blue" />
+                    <TextView android:id="@+id/detailsFee" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:saveEnabled="false" android:textIsSelectable="true" android:layout_marginTop="@dimen/space_sm" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView android:id="@+id/patientCard"
+                style="@style/Widget.MediBook.FeatureCard" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="16dp" android:visibility="gone">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="@string/appointment_patient_heading"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="@color/medibook_blue" />
+                    <TextView android:id="@+id/patientName" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="8dp"
+                        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                    <TextView android:id="@+id/patientAge" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                    <TextView android:id="@+id/patientGender" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                    <TextView android:id="@+id/patientPhone" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView android:id="@+id/reminderCard"
+                style="@style/Widget.MediBook.FeatureCard" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="16dp" android:visibility="gone">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="@string/reminder_heading"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="@color/medibook_blue" />
+                    <TextView android:id="@+id/reminderStatus" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="8dp"
+                        android:accessibilityLiveRegion="polite"
+                        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                    <com.google.android.material.button.MaterialButton android:id="@+id/reminderButton"
+                        style="@style/Widget.MediBook.TextButton" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:text="@string/reminder_custom_set" />
+                    <com.google.android.material.button.MaterialButton android:id="@+id/removeReminderButton"
+                        style="@style/Widget.MediBook.DestructiveTextButton" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:text="@string/reminder_custom_remove"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.button.MaterialButton android:id="@+id/cancelButton" style="@style/Widget.MediBook.DestructiveButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_xxl" android:text="@string/appointment_cancel" android:visibility="gone" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/refreshButton" style="@style/Widget.MediBook.TextButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/appointment_refresh" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

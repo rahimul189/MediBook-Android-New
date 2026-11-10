@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/medibook_teal"
+        android:pathData="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h10v-2h-2v-2h2v-1.82c-0.71,-0.12 -1.4,-0.18 -2,-0.18zM19,13h-2v3h-3v2h3v3h2v-3h3v-2h-3z" />
+</vector>

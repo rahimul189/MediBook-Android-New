@@ -1,0 +1,20 @@
+<resources>
+    <string name="doctor_image_url_label">Doctor photo URL (optional)</string>
+    <string name="doctor_image_url_help">Paste a public HTTPS photo link, or leave blank for the default avatar.</string>
+    <string name="doctor_image_url_error">Use a public https:// URL (up to 2048 characters), without spaces, credentials, ports or fragments.</string>
+    <string name="live_not_configured">Updates are unavailable. Check your appointment history.</string>
+    <string name="live_connecting">Loading updates…</string>
+    <string name="live_offline">Updates are offline. Reconnecting…</string>
+    <string name="live_rules_error">Updates are unavailable. Please try again.</string>
+    <string name="live_bridge_error">Unable to refresh updates. Please try again.</string>
+    <string name="live_empty">No recent updates.</string>
+    <string name="live_verified">Updated</string>
+    <string name="live_unverified">Unable to refresh this update. Check appointment history.</string>
+    <string name="live_queue_title">Recent slot updates</string>
+    <string name="live_queue_hint">Recent updates for this date.</string>
+    <string name="live_booking_alert">%1$s · Confirmed\nAppointment Slot No.: %2$s\n%3$s · %4$s</string>
+    <string name="live_patient_alert">%3$s · %1$s\n%4$s\nAppointment Slot No.: %2$s</string>
+    <string name="dashboard_patient_appointments">View your bookings, status and retained history.</string>
+    <string name="live_queue_message">%1$s\n%2$s</string>
+    <string name="dashboard_admin_appointments">Review bookings and individual cancellations.</string>
+</resources>

@@ -1,0 +1,55 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+/.idea/.name
+/.idea/compiler.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/gradle.xml
+/.idea/misc.xml
+/.idea/runConfigurations.xml
+/.idea/vcs.xml
+
+# Local Firebase application configuration
+/app/google-services.json
+
+# Never commit privileged Firebase/Admin credentials or local secrets.
+**/*service-account*.json
+**/*service_account*.json
+**/*serviceAccount*.json
+**/*firebase-adminsdk*.json
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Machine-specific IDE settings, including appInsightsSettings.xml.
+/.idea/
+
+# Generated output and local temporary files, including future Gradle modules.
+**/build/
+/.firebase/
+*.apk
+*.aab
+*.apks
+*.log
+*.tmp
+*.temp
+*.bak
+*~

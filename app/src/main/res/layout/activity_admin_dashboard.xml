@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".activities.admin.AdminDashboardActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.MediBook.AuthCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/loadingIndicator"
+                    style="@style/Widget.MediBook.Progress.Page"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_horizontal"
+                    android:indeterminate="true" />
+
+                <TextView
+                    android:id="@+id/sessionStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:text="@string/checking_session"
+                    android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+                <LinearLayout
+                    android:id="@+id/adminContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/dashboardHeading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/admin_dashboard_heading"
+                        android:textAppearance="@style/TextAppearance.MediBook.Heading" />
+
+                    <TextView
+                        android:id="@+id/welcomeMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:saveEnabled="false"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="@color/medibook_teal_dark" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/admin_dashboard_description"
+                        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/admin_overview_heading"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                        android:textColor="@color/medibook_text"
+                        android:textStyle="bold" />
+
+                    <com.example.medibook.views.AdaptiveColumnsLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/Widget.MediBook.FeatureCard"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_today_label"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                                    android:textColor="@color/medibook_blue" />
+
+                                <TextView
+                                    android:id="@+id/todayCount"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:saveEnabled="false"
+                                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                                    android:textColor="@color/medibook_text"
+                                    android:textStyle="bold"
+                                    tools:text="4" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_today_caption"
+                                    android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <Space
+                            android:layout_width="8dp"
+                            android:layout_height="1dp" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/Widget.MediBook.FeatureCard"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_week_label"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                                    android:textColor="@color/medibook_blue" />
+
+                                <TextView
+                                    android:id="@+id/weekCount"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:saveEnabled="false"
+                                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                                    android:textColor="@color/medibook_text"
+                                    android:textStyle="bold"
+                                    tools:text="17" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_week_caption"
+                                    android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </com.example.medibook.views.AdaptiveColumnsLayout>
+
+                    <com.example.medibook.views.AdaptiveColumnsLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:layout_marginTop="8dp">
+                        <com.google.android.material.card.MaterialCardView style="@style/Widget.MediBook.FeatureCard"
+                            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                                android:orientation="vertical" android:padding="12dp">
+                                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                                    android:text="@string/admin_confirmed_today" android:textColor="@color/medibook_blue"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+                                <TextView android:id="@+id/confirmedCount" android:layout_width="match_parent" android:layout_height="wrap_content"
+                                    android:saveEnabled="false" android:textColor="@color/medibook_text" android:textStyle="bold"
+                                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                        <Space android:layout_width="8dp" android:layout_height="1dp" />
+                        <com.google.android.material.card.MaterialCardView style="@style/Widget.MediBook.FeatureCard"
+                            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                                android:orientation="vertical" android:padding="12dp">
+                                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                                    android:text="@string/admin_cancelled_today" android:textColor="@color/medibook_blue"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+                                <TextView android:id="@+id/cancelledCount" android:layout_width="match_parent" android:layout_height="wrap_content"
+                                    android:saveEnabled="false" android:textColor="@color/medibook_text" android:textStyle="bold"
+                                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </com.example.medibook.views.AdaptiveColumnsLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/Widget.MediBook.FeatureCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/admin_weekly_chart_title"
+                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textColor="@color/medibook_text"
+                                android:textStyle="bold" />
+
+                            <com.example.medibook.views.WeeklyBarChartView
+                                android:id="@+id/weeklyChart"
+                                android:layout_width="match_parent"
+                                android:layout_height="180dp"
+                                android:layout_marginTop="8dp" />
+
+                            <TextView
+                                android:id="@+id/analyticsMessage"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:accessibilityLiveRegion="polite"
+                                android:saveEnabled="false"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body"
+                                android:visibility="gone" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/analyticsRetry"
+                                style="@style/Widget.MediBook.TextButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/admin_analytics_retry"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/Widget.MediBook.FeatureCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/manageDoctorsButton"
+                                style="@style/Widget.MediBook.TextButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/manage_doctors_title"
+                                app:icon="@drawable/ic_doctor"
+                                app:iconGravity="textStart" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="@string/doctor_dashboard_hint"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/Widget.MediBook.FeatureCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/manageAppointmentsButton"
+                                style="@style/Widget.MediBook.TextButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/appointment_manage"
+                                app:icon="@drawable/ic_calendar_cross" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/dashboard_admin_appointments"
+                                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/logoutButton"
+                    style="@style/Widget.MediBook.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/logout_button" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

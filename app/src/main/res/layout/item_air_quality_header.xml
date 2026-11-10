@@ -1,0 +1,17 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+    <TextView android:id="@+id/location" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/air_quality_title"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" android:textColor="@color/medibook_text" android:textStyle="bold" />
+    <TextView android:id="@+id/locationNote" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/environment_location_approximate_note"
+        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+    <TextView android:id="@+id/freshness" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" android:textColor="@color/medibook_blue" />
+    <TextView android:id="@+id/timestamp" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+        android:text="@string/air_quality_source"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" android:textColor="@color/medibook_blue" />
+</LinearLayout>

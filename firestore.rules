@@ -1,0 +1,773 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Only a trusted Admin SDK environment
+    // may assign this claim; a users/{uid}.role field NEVER grants Admin privileges.
+    function isAdmin() {
+      return signedIn() && request.auth.token.get('admin', false) == true;
+    }
+
+    // Match the established Patient claim policy: even admin=false/null/malformed is not a
+    // Patient token. UID comes only from Firebase Auth and the document path, never profile data.
+    function ownsPatientProfile(uid) {
+      return signedIn() && request.auth.uid == uid
+        && !request.auth.token.keys().hasAny(['admin']);
+    }
+
+    // Called only after the type/ISO-shape guard below. Round-trip the calendar components so
+    // timestamp normalization cannot accept e.g. 2001-02-29. "Today" is Asia/Dhaka, not UTC.
+    function validBirthDate(value) {
+      let parts = value.split('-');
+      let year = int(parts[0]);
+      let month = int(parts[1]);
+      let day = int(parts[2]);
+      let birth = timestamp.date(year, month, day);
+      return year >= 1900 && month >= 1 && month <= 12 && day >= 1 && day <= 31
+        && birth.year() == year && birth.month() == month && birth.day() == day
+        && birth <= timestamp.value(request.time.toMillis() + 21600000).date();
+    }
+
+    // Omission is valid for legacy profiles; present null/empty/invalid values are not.
+    // Read-side helper: accepts the two current values plus legacy values already stored.
+    // Reused by schedule reads and appointment/booking profile validation.
+    function validOptionalPatientDetails(data) {
+      return (!data.keys().hasAny(['dateOfBirth'])
+          || (data.dateOfBirth is string
+            && data.dateOfBirth.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+            && validBirthDate(data.dateOfBirth)))
+        && (!data.keys().hasAny(['gender'])
+          || (data.gender is string && data.gender in ['Male', 'Female', 'Other', 'Prefer not to say']));
+    }
+
+    // Write-side helper: new and updated profiles may store only the two current values.
+    function validWritablePatientDetails(data) {
+      return (!data.keys().hasAny(['dateOfBirth'])
+          || (data.dateOfBirth is string
+            && data.dateOfBirth.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+            && validBirthDate(data.dateOfBirth)))
+        && (!data.keys().hasAny(['gender'])
+          || (data.gender is string && data.gender in ['Male', 'Female']));
+    }
+
+    function validPatientProfile() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['fullName', 'email', 'phone', 'role', 'createdAt'])
+        && data.keys().hasOnly(['fullName', 'email', 'phone', 'role', 'createdAt', 'dateOfBirth', 'gender'])
+        && validWritablePatientDetails(data)
+        && data.fullName is string
+        && data.fullName.size() > 0 && data.fullName.size() <= 100
+        && data.fullName.matches('.*\\S.*')
+        && data.email is string
+        && data.email.size() > 0 && data.email.size() <= 254
+        && data.email == request.auth.token.get('email', '')
+        && data.phone is string
+        && data.phone.matches('^\\+?[0-9]{7,15}$')
+        && data.role == 'Patient'
+        && data.createdAt is timestamp
+        && data.createdAt == request.time;
+    }
+
+    match /users/{uid} {
+      allow create: if ownsPatientProfile(uid) && validPatientProfile();
+      // Own gets (including a missing profile) support session verification. A trusted Admin
+      // may resolve one Patient profile by UID, never other Admin/unknown-role profiles or lists.
+      allow get: if (signedIn() && request.auth.uid == uid)
+        || (isAdmin() && resource.data.role == 'Patient');
+      // An explicit diff allowlist protects email, role, createdAt and every unlisted field.
+      // Validate the complete final schema/types, not just the edited display fields.
+      allow update: if ownsPatientProfile(uid) && resource.data.role == 'Patient'
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['fullName', 'phone', 'dateOfBirth', 'gender'])
+        && validSchedulePatient(request.resource.data)
+        && validWritablePatientDetails(request.resource.data);
+      allow list, delete: if false;
+    }
+
+    // Retired in-app history. Existing documents are retained but inaccessible to all clients.
+    // Android appointment reminders do not use this collection.
+    match /users/{uid}/notifications/{notificationId} {
+      allow read, write: if false;
+    }
+
+    // A Patient profile never grants Admin powers. Reject malformed Admin claims for Patient reads.
+    function isPatient() {
+      return signedIn() && !request.auth.token.keys().hasAny(['admin'])
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Patient';
+    }
+
+    function validDoctorText(value, maxLength) {
+      return value is string && value.size() > 0 && value.size() <= maxLength
+        && value.matches('.*[^\\s\\x{00A0}\\x{1680}\\x{2000}-\\x{200A}\\x{202F}\\x{205F}\\x{3000}].*')
+        && !value.matches('(?s).*[\\x00-\\x1F\\x7F-\\x9F\\x{2028}\\x{2029}].*');
+    }
+
+    function validDoctor() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['name', 'specialization', 'qualifications', 'consultationFee',
+          'biography', 'active', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['name', 'specialization', 'qualifications', 'consultationFee',
+          'biography', 'active', 'createdAt', 'updatedAt', 'imageUrl'])
+        && (!data.keys().hasAny(['imageUrl']) || (data.imageUrl is string && data.imageUrl.size() <= 2048
+          && (data.imageUrl == '' || data.imageUrl.matches(
+            'https://[A-Za-z0-9][A-Za-z0-9.-]*[A-Za-z0-9](/[A-Za-z0-9._~!$&()*+,;=:@%/?-]*)?'))))
+        && validDoctorText(data.name, 100)
+        && validDoctorText(data.specialization, 100)
+        && validDoctorText(data.qualifications, 200)
+        // Fee is integer hundredths: the UI amount 500.00 is stored as 50000.
+        && data.consultationFee is int && data.consultationFee >= 0 && data.consultationFee <= 99999999
+        && data.biography is string && data.biography.size() <= 1000
+        && !data.biography.matches('(?s).*[\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F-\\x9F\\x{2028}\\x{2029}].*')
+        && data.active is bool
+        && data.createdAt is timestamp && data.updatedAt is timestamp
+        && data.updatedAt >= data.createdAt;
+    }
+
+    match /doctors/{doctorId} {
+      // Rules are not filters: a Patient list query MUST use where('active', '==', true).
+      allow read: if isAdmin() || (isPatient() && resource.data.active == true);
+      allow create: if isAdmin() && doctorId.matches('^[A-Za-z0-9_-]{1,128}$') && validDoctor()
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isAdmin() && validDoctor()
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedAt > resource.data.updatedAt
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'specialization', 'qualifications', 'consultationFee', 'biography', 'active', 'imageUrl', 'updatedAt']);
+      allow delete: if false;
+    }
+
+    // Weekly schedule rules (Step 69). Existing Patient and Doctor policies above are unchanged.
+    function validSchedulePatient(data) {
+      return data.keys().hasAll(['fullName', 'email', 'phone', 'role', 'createdAt'])
+        && data.keys().hasOnly(['fullName', 'email', 'phone', 'role', 'createdAt', 'dateOfBirth', 'gender'])
+        && validOptionalPatientDetails(data)
+        && data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 100
+        && data.fullName.matches('.*\\S.*')
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 254
+        && data.email == request.auth.token.get('email', '')
+        && data.phone is string && data.phone.matches('^\\+?[0-9]{7,15}$')
+        && data.role == 'Patient' && data.createdAt is timestamp;
+    }
+
+    function validSchedule() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['dayOfWeek', 'startTime', 'endTime', 'slotDurationMinutes', 'active', 'updatedAt'])
+        && data.keys().hasOnly(['dayOfWeek', 'startTime', 'endTime', 'slotDurationMinutes', 'active', 'updatedAt'])
+        && data.dayOfWeek is int && data.dayOfWeek >= 1 && data.dayOfWeek <= 7
+        // Both times are integer minutes after midnight in Asia/Dhaka, never HH:mm strings or UTC.
+        && data.startTime is int && data.startTime >= 0 && data.startTime <= 1439
+        && data.endTime is int && data.endTime > data.startTime && data.endTime <= 1439
+        && data.slotDurationMinutes is int && data.slotDurationMinutes >= 5 && data.slotDurationMinutes <= 180
+        && data.slotDurationMinutes % 5 == 0 && data.slotDurationMinutes <= data.endTime - data.startTime
+        && data.active is bool && data.updatedAt is timestamp && data.updatedAt == request.time;
+    }
+
+    match /doctors/{doctorId}/schedules/{scheduleId} {
+      // Patients must query this doctor's schedules with where('active', '==', true).
+      // Schedule reads validate the full existing Patient profile, not merely its role field.
+      allow read: if isAdmin() || (isPatient()
+        && validSchedulePatient(get(/databases/$(database)/documents/users/$(request.auth.uid)).data)
+        && exists(/databases/$(database)/documents/doctors/$(doctorId))
+        && get(/databases/$(database)/documents/doctors/$(doctorId)).data.active == true
+        && resource.data.active == true);
+      allow create: if isAdmin()
+        && doctorId.matches('^[A-Za-z0-9_-]{1,128}$') && scheduleId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && exists(/databases/$(database)/documents/doctors/$(doctorId)) && validSchedule();
+      allow update: if isAdmin()
+        && doctorId.matches('^[A-Za-z0-9_-]{1,128}$') && scheduleId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && exists(/databases/$(database)/documents/doctors/$(doctorId)) && validSchedule()
+        && request.resource.data.updatedAt > resource.data.updatedAt;
+      allow delete: if false;
+      // IDs live only in the path; the exact six-field schema rejects editable identifier fields.
+      // Rules cannot query all sibling windows. Global overlap prevention is NOT enforced here.
+    }
+
+    // Step 89 reservation rules. Each booking requires three coordinated writes in one batch:
+    // slot available -> booked, immutable generation lock, and a Confirmed appointment.
+    // Rules validate all three projected documents with getAfter(); a missing or forged write
+    // therefore denies the whole batch. Asia/Dhaka is fixed UTC+06:00 without DST.
+    function validAppointmentPatientProfile(data) {
+      return data.keys().hasAll(['fullName', 'email', 'phone', 'role', 'createdAt'])
+        && data.keys().hasOnly(['fullName', 'email', 'phone', 'role', 'createdAt', 'dateOfBirth', 'gender'])
+        && validOptionalPatientDetails(data)
+        && data.fullName is string
+        && data.fullName.size() > 0 && data.fullName.size() <= 100
+        && data.fullName.matches('.*\\S.*')
+        && data.email is string
+        && data.email.size() > 0 && data.email.size() <= 254
+        && data.email == request.auth.token.get('email', '')
+        && data.phone is string
+        && data.phone.matches('^\\+?[0-9]{7,15}$')
+        && data.role == 'Patient'
+        && data.createdAt is timestamp;
+    }
+
+    // One profile read; missing data makes the profile helper deny rather than grant a role.
+    function isAppointmentPatient() {
+      return signedIn() && !request.auth.token.keys().hasAny(['admin'])
+        && validAppointmentPatientProfile(
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data);
+    }
+
+    function isBookingActor() {
+      return signedIn() && !request.auth.token.keys().hasAny(['admin']);
+    }
+
+    function isDhakaMidnight(value) {
+      return value is timestamp
+        && value.nanos() == 0
+        && timestamp.value(value.toMillis() + 21600000).hours() == 0
+        && timestamp.value(value.toMillis() + 21600000).minutes() == 0
+        && timestamp.value(value.toMillis() + 21600000).seconds() == 0;
+    }
+
+    function dhakaDayOfWeek(value) {
+      // Rules dayOfWeek() is ISO: Monday=1 through Sunday=7, matching DoctorSchedule/Appointment.
+      return timestamp.value(value.toMillis() + 21600000).dayOfWeek();
+    }
+
+    // Deterministic identities shared with ReservationIdentity.java. Rules string(integer) is
+    // decimal, Timestamp.toMillis() is an integer, and strings concatenate with +.
+    function dhakaDateKey(value) {
+      return string(value.toMillis());
+    }
+
+    function inventorySlotId(startAt, endAt) {
+      return 's' + string(startAt.toMillis()) + '-' + string(endAt.toMillis());
+    }
+
+    function bookingLockDocumentId(generation) {
+      return 'g' + string(generation);
+    }
+
+    function inventorySlotPath(doctorIdValue, appointmentDateValue, startAtValue, endAtValue) {
+      return /databases/$(database)/documents/doctorSlotInventory/$(doctorIdValue)
+          /dates/$(dhakaDateKey(appointmentDateValue))
+          /slots/$(inventorySlotId(startAtValue, endAtValue));
+    }
+
+    function bookingLockPath(doctorIdValue, appointmentDateValue, startAtValue, endAtValue,
+                             generationValue) {
+      return /databases/$(database)/documents/doctorSlotInventory/$(doctorIdValue)
+          /dates/$(dhakaDateKey(appointmentDateValue))
+          /slots/$(inventorySlotId(startAtValue, endAtValue))
+          /bookings/$(bookingLockDocumentId(generationValue));
+    }
+
+    function dateBlockPath(doctorIdValue, appointmentDateValue) {
+      return /databases/$(database)/documents/doctorDateBlocks/$(doctorIdValue)
+          /dates/$(dhakaDateKey(appointmentDateValue));
+    }
+
+    function validAppointmentDoctorSnapshot(data, doctor) {
+      return doctor.active == true
+        && doctor.name == data.doctorName
+        && doctor.specialization == data.doctorSpecialization
+        && doctor.consultationFee == data.consultationFee;
+    }
+
+    function validAppointmentSchedule(data, schedule) {
+      return schedule.active == true
+        && schedule.dayOfWeek == data.dayOfWeek
+        && data.startMinute >= schedule.startTime
+        && data.endMinute <= schedule.endTime
+        && data.endMinute - data.startMinute == schedule.slotDurationMinutes
+        && (data.startMinute - schedule.startTime) % schedule.slotDurationMinutes == 0;
+    }
+
+    // All callers compare the six fields to trusted slot/appointment values, so the record helper
+    // only needs to enforce the exact field set; those comparisons also enforce the value types.
+    function validBookingLockRecord(data) {
+      return data.keys().hasAll(['appointmentId', 'patientUid', 'scheduleId',
+          'startAt', 'endAt', 'createdAt'])
+        && data.keys().hasOnly(['appointmentId', 'patientUid', 'scheduleId',
+          'startAt', 'endAt', 'createdAt']);
+    }
+
+    // Appointment create reads 7 documents: profile, doctor, schedule, slot, projected slot,
+    // projected lock and the date-block existence check. Slot definitions are immutable and were
+    // validated by the Admin publish rule, so exact equality replaces re-deriving the same schema.
+    function validAppointmentCreate(appointmentIdValue) {
+      let data = request.resource.data;
+      let profile = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      let doctor = get(/databases/$(database)/documents/doctors/$(data.doctorId)).data;
+      let schedule = get(/databases/$(database)/documents/doctors/$(data.doctorId)
+          /schedules/$(data.scheduleId)).data;
+      let slot = get(inventorySlotPath(data.doctorId, data.appointmentDate,
+          data.startAt, data.endAt)).data;
+      let slotAfter = getAfter(inventorySlotPath(data.doctorId, data.appointmentDate,
+          data.startAt, data.endAt)).data;
+      let lockAfter = getAfter(bookingLockPath(data.doctorId, data.appointmentDate,
+          data.startAt, data.endAt, slot.generation + 1)).data;
+      return data.keys().hasAll(['patientUid', 'patientName', 'patientPhone',
+          'doctorId', 'doctorName', 'doctorSpecialization', 'consultationFee',
+          'scheduleId', 'dayOfWeek', 'appointmentDate', 'startMinute', 'endMinute',
+          'startAt', 'endAt', 'status', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['patientUid', 'patientName', 'patientPhone',
+          'doctorId', 'doctorName', 'doctorSpecialization', 'consultationFee',
+          'scheduleId', 'dayOfWeek', 'appointmentDate', 'startMinute', 'endMinute',
+          'startAt', 'endAt', 'status', 'createdAt', 'updatedAt'])
+        && data.patientUid is string
+        && data.patientUid.matches('^[A-Za-z0-9_-]{1,128}$')
+        && data.patientUid == request.auth.uid
+        && validAppointmentPatientProfile(profile)
+        && data.patientName == profile.fullName
+        && data.patientPhone == profile.phone
+        && data.doctorId is string
+        && data.doctorId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && data.scheduleId is string
+        && data.scheduleId.matches('^[A-Za-z0-9_-]{1,128}$')
+        // Rules numeric equality accepts 1.0 == 1; preserve the strict persisted integer schema.
+        && data.consultationFee is int && data.dayOfWeek is int
+        && data.startMinute is int && data.endMinute is int
+        && validAppointmentDoctorSnapshot(data, doctor)
+        && validAppointmentSchedule(data, schedule)
+        && slot.scheduleId == data.scheduleId
+        && slot.appointmentDate == data.appointmentDate
+        && slot.dayOfWeek == data.dayOfWeek
+        && slot.startMinute == data.startMinute
+        && slot.endMinute == data.endMinute
+        && slot.startAt == data.startAt
+        && slot.endAt == data.endAt
+        && slot.status == 'available'
+        && slot.appointmentId == null
+        && slot.generation is int && slot.generation >= 0
+        && slotAfter.status == 'booked'
+        && slotAfter.generation == slot.generation + 1
+        && slotAfter.appointmentId == appointmentIdValue
+        && slotAfter.updatedAt == request.time
+        && slotAfter.diff(slot).affectedKeys()
+             .hasOnly(['status', 'generation', 'appointmentId', 'updatedAt'])
+        && validBookingLockRecord(lockAfter)
+        && lockAfter.appointmentId == appointmentIdValue
+        && lockAfter.patientUid == request.auth.uid
+        && lockAfter.scheduleId == data.scheduleId
+        && lockAfter.startAt == data.startAt
+        && lockAfter.endAt == data.endAt
+        && lockAfter.createdAt == request.time
+        && data.status == 'Confirmed'
+        && data.createdAt == request.time
+        && data.updatedAt == request.time
+        && data.startAt > request.time
+        && !exists(dateBlockPath(data.doctorId, data.appointmentDate));
+    }
+
+    // Slot booking update reads the projected lock and projected appointment (2 accesses). The
+    // appointment create rule owns full schema/snapshot validation; this rule proves the same
+    // projected appointment is the confirmed owner of this slot and that no other field changed.
+    function validBookingSlotUpdate(doctorIdValue, dateKeyValue, slotIdValue) {
+      let before = resource.data;
+      let after = request.resource.data;
+      let lock = getAfter(/databases/$(database)/documents/doctorSlotInventory/$(doctorIdValue)
+          /dates/$(dateKeyValue)/slots/$(slotIdValue)
+          /bookings/$(bookingLockDocumentId(after.generation))).data;
+      let appointment = getAfter(/databases/$(database)/documents/appointments/$(after.appointmentId)).data;
+      return isBookingActor()
+        && before.status == 'available'
+        && before.appointmentId == null
+        && before.generation is int && before.generation >= 0
+        && after.status == 'booked'
+        && after.generation is int && after.generation == before.generation + 1
+        && after.dayOfWeek is int && after.startMinute is int && after.endMinute is int
+        && after.appointmentId is string
+        && after.appointmentId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && after.updatedAt == request.time
+        && after.updatedAt > before.updatedAt
+        && after.diff(before).affectedKeys()
+             .hasOnly(['status', 'generation', 'appointmentId', 'updatedAt'])
+        && dateKeyValue == dhakaDateKey(before.appointmentDate)
+        && slotIdValue == inventorySlotId(before.startAt, before.endAt)
+        && validBookingLockRecord(lock)
+        && lock.appointmentId == after.appointmentId
+        && lock.patientUid == request.auth.uid
+        && lock.scheduleId == before.scheduleId
+        && lock.startAt == before.startAt
+        && lock.endAt == before.endAt
+        && lock.createdAt == request.time
+        && appointment.status == 'Confirmed'
+        && appointment.patientUid == request.auth.uid
+        && appointment.doctorId == doctorIdValue
+        && appointment.scheduleId == before.scheduleId
+        && appointment.appointmentDate == before.appointmentDate
+        && appointment.startAt == before.startAt
+        && appointment.endAt == before.endAt
+        && appointment.createdAt == request.time
+        && appointment.updatedAt == request.time;
+    }
+
+    // Lock create reads the projected slot and projected appointment (2 accesses).
+    function validBookingLockCreate(doctorIdValue, dateKeyValue, slotIdValue, bookingLockIdValue) {
+      let data = request.resource.data;
+      let slot = getAfter(/databases/$(database)/documents/doctorSlotInventory/$(doctorIdValue)
+          /dates/$(dateKeyValue)/slots/$(slotIdValue)).data;
+      let appointment = getAfter(/databases/$(database)/documents/appointments/$(data.appointmentId)).data;
+      return isBookingActor()
+        && validBookingLockRecord(data)
+        && data.patientUid == request.auth.uid
+        && data.createdAt == request.time
+        && bookingLockIdValue == bookingLockDocumentId(slot.generation)
+        && slot.status == 'booked'
+        && slot.generation is int && slot.generation >= 1
+        && slot.appointmentId == data.appointmentId
+        && slot.scheduleId == data.scheduleId
+        && slot.startAt == data.startAt
+        && slot.endAt == data.endAt
+        && slot.updatedAt == request.time
+        && dateKeyValue == dhakaDateKey(slot.appointmentDate)
+        && slotIdValue == inventorySlotId(slot.startAt, slot.endAt)
+        && appointment.status == 'Confirmed'
+        && appointment.patientUid == data.patientUid
+        && appointment.doctorId == doctorIdValue
+        && appointment.scheduleId == data.scheduleId
+        && appointment.startAt == data.startAt
+        && appointment.endAt == data.endAt
+        && appointment.createdAt == request.time
+        && appointment.updatedAt == request.time
+        && dhakaDateKey(appointment.appointmentDate) == dateKeyValue;
+    }
+
+    // Appointment cancellation update reads the current slot, immutable lock and projected slot.
+    function validAppointmentCancellation(appointmentIdValue) {
+      let before = resource.data;
+      let after = request.resource.data;
+      let slotBefore = get(inventorySlotPath(before.doctorId, before.appointmentDate,
+          before.startAt, before.endAt)).data;
+      let lock = get(bookingLockPath(before.doctorId, before.appointmentDate,
+          before.startAt, before.endAt, slotBefore.generation)).data;
+      let slotAfter = getAfter(inventorySlotPath(before.doctorId, before.appointmentDate,
+          before.startAt, before.endAt)).data;
+      return before.status == 'Confirmed'
+        && after.status == 'Cancelled'
+        && after.consultationFee is int && after.dayOfWeek is int
+        && after.startMinute is int && after.endMinute is int
+        && after.updatedAt == request.time
+        && after.diff(before).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && before.startAt > request.time
+        && slotBefore.status == 'booked'
+        && slotBefore.appointmentId == appointmentIdValue
+        && slotBefore.generation is int && slotBefore.generation >= 1
+        && slotBefore.scheduleId == before.scheduleId
+        && slotBefore.appointmentDate.toMillis() == before.appointmentDate.toMillis()
+        && slotBefore.dayOfWeek == before.dayOfWeek
+        && slotBefore.startMinute == before.startMinute
+        && slotBefore.endMinute == before.endMinute
+        && slotBefore.startAt == before.startAt
+        && slotBefore.endAt == before.endAt
+        && lock.appointmentId == appointmentIdValue
+        && lock.patientUid == before.patientUid
+        && lock.scheduleId == before.scheduleId
+        && lock.startAt == before.startAt
+        && lock.endAt == before.endAt
+        && slotAfter.status is string
+        && (slotAfter.status == 'available' || slotAfter.status == 'blocked')
+        && slotAfter.appointmentId == null
+        && slotAfter.generation == slotBefore.generation
+        && slotAfter.updatedAt == request.time
+        && slotAfter.updatedAt > slotBefore.updatedAt
+        && slotAfter.diff(slotBefore).affectedKeys()
+             .hasOnly(['status', 'appointmentId', 'updatedAt']);
+    }
+
+    // Slot cancellation reads current lock/current appointment/projected appointment/date block.
+    // A blocked date forces blocked release; without a block, Patients release only to available.
+    function validSlotCancellation(doctorIdValue, dateKeyValue, slotIdValue) {
+      let before = resource.data;
+      let after = request.resource.data;
+      let appointmentIdValue = before.appointmentId;
+      let appointmentBefore = get(/databases/$(database)/documents/appointments/$(appointmentIdValue)).data;
+      let lock = get(bookingLockPath(doctorIdValue, before.appointmentDate,
+          before.startAt, before.endAt, before.generation)).data;
+      let appointmentAfter = getAfter(/databases/$(database)/documents/appointments/$(appointmentIdValue)).data;
+      let blocked = exists(dateBlockPath(doctorIdValue, before.appointmentDate));
+      return before.status == 'booked'
+        && before.appointmentId is string
+        && before.appointmentId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && before.startAt > request.time
+        && dateKeyValue == dhakaDateKey(before.appointmentDate)
+        && slotIdValue == inventorySlotId(before.startAt, before.endAt)
+        && appointmentBefore.status == 'Confirmed'
+        && appointmentBefore.doctorId == doctorIdValue
+        && appointmentBefore.scheduleId == before.scheduleId
+        && appointmentBefore.appointmentDate.toMillis() == before.appointmentDate.toMillis()
+        && appointmentBefore.dayOfWeek == before.dayOfWeek
+        && appointmentBefore.startMinute == before.startMinute
+        && appointmentBefore.endMinute == before.endMinute
+        && appointmentBefore.startAt == before.startAt
+        && appointmentBefore.endAt == before.endAt
+        && (isAdmin() || appointmentBefore.patientUid == request.auth.uid)
+        && lock.appointmentId == appointmentIdValue
+        && lock.patientUid == appointmentBefore.patientUid
+        && lock.scheduleId == before.scheduleId
+        && lock.startAt == before.startAt
+        && lock.endAt == before.endAt
+        && appointmentAfter.status == 'Cancelled'
+        && appointmentAfter.updatedAt == request.time
+        && appointmentAfter.diff(appointmentBefore).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && after.status is string
+        && (blocked
+             ? after.status == 'blocked'
+             : (after.status == 'available' || (isAdmin() && after.status == 'blocked')))
+        && after.appointmentId == null
+        && after.generation is int && after.dayOfWeek is int
+        && after.startMinute is int && after.endMinute is int
+        && after.generation == before.generation
+        && after.updatedAt == request.time
+        && after.updatedAt > before.updatedAt
+        && after.diff(before).affectedKeys()
+             .hasOnly(['status', 'appointmentId', 'updatedAt']);
+    }
+
+    // Inventory publication is Admin-only. The Admin publisher is responsible for passing every
+    // existing interval to SlotInventory so the published day is pairwise non-overlapping.
+    // Rules cannot query or iterate sibling slots and therefore cannot prove that invariant.
+    function validInventorySlotCreate(doctorIdValue, dateKeyValue, slotIdValue) {
+      let data = request.resource.data;
+      let doctor = get(/databases/$(database)/documents/doctors/$(doctorIdValue)).data;
+      let schedule = get(/databases/$(database)/documents/doctors/$(doctorIdValue)
+          /schedules/$(data.scheduleId)).data;
+      return data.keys().hasAll(['scheduleId', 'appointmentDate', 'dayOfWeek',
+          'startMinute', 'endMinute', 'startAt', 'endAt', 'status',
+          'generation', 'appointmentId', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['scheduleId', 'appointmentDate', 'dayOfWeek',
+          'startMinute', 'endMinute', 'startAt', 'endAt', 'status',
+          'generation', 'appointmentId', 'createdAt', 'updatedAt'])
+        && data.scheduleId is string
+        && data.scheduleId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && data.appointmentDate is timestamp
+        && isDhakaMidnight(data.appointmentDate)
+        && dateKeyValue == dhakaDateKey(data.appointmentDate)
+        && data.dayOfWeek is int && data.dayOfWeek >= 1 && data.dayOfWeek <= 7
+        && dhakaDayOfWeek(data.appointmentDate) == data.dayOfWeek
+        && data.startMinute is int
+        && data.startMinute >= 0 && data.startMinute <= 1439
+        && data.endMinute is int
+        && data.endMinute > data.startMinute && data.endMinute <= 1439
+        && data.startAt is timestamp && data.startAt.nanos() == 0
+        && data.endAt is timestamp && data.endAt.nanos() == 0
+        && data.startAt.toMillis()
+             == data.appointmentDate.toMillis() + data.startMinute * 60000
+        && data.endAt.toMillis()
+             == data.appointmentDate.toMillis() + data.endMinute * 60000
+        && slotIdValue == inventorySlotId(data.startAt, data.endAt)
+        && data.status is string
+        && (data.status == 'available' || data.status == 'blocked')
+        && data.generation is int && data.generation == 0
+        && data.appointmentId == null
+        && data.createdAt is timestamp && data.createdAt == request.time
+        && data.updatedAt is timestamp && data.updatedAt == request.time
+        && doctor.active == true
+        && schedule.active == true
+        && schedule.dayOfWeek == data.dayOfWeek
+        && data.startMinute >= schedule.startTime
+        && data.endMinute <= schedule.endTime
+        && data.endMinute - data.startMinute == schedule.slotDurationMinutes
+        && (data.startMinute - schedule.startTime) % schedule.slotDurationMinutes == 0;
+    }
+
+    // Admin may only flip an unbooked slot between available and blocked. Booked slots must be
+    // released by the atomic cancellation batch, and intervals/generations are immutable.
+    function validInventorySlotUpdate() {
+      let before = resource.data;
+      let after = request.resource.data;
+      return isAdmin()
+        && before.status is string
+        && (before.status == 'available' || before.status == 'blocked')
+        && after.status is string
+        && (after.status == 'available' || after.status == 'blocked')
+        && after.status != before.status
+        && after.generation is int && after.dayOfWeek is int
+        && after.startMinute is int && after.endMinute is int
+        && after.generation == before.generation
+        && after.appointmentId == before.appointmentId
+        && after.updatedAt is timestamp && after.updatedAt == request.time
+        && after.updatedAt > before.updatedAt
+        && after.diff(before).affectedKeys().hasOnly(['status', 'updatedAt']);
+    }
+
+    function validDateBlockCreate(doctorIdValue, dateKeyValue) {
+      let data = request.resource.data;
+      let doctor = get(/databases/$(database)/documents/doctors/$(doctorIdValue)).data;
+      return data.keys().hasAll(['date', 'reason', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['date', 'reason', 'createdAt', 'updatedAt'])
+        && data.date is timestamp
+        && isDhakaMidnight(data.date)
+        && dateKeyValue == dhakaDateKey(data.date)
+        && data.reason is string && data.reason.size() <= 200
+        && data.createdAt is timestamp && data.createdAt == request.time
+        && data.updatedAt is timestamp && data.updatedAt == request.time
+        && doctor.active is bool;
+    }
+
+    function validDateBlockUpdate() {
+      let before = resource.data;
+      let after = request.resource.data;
+      return isAdmin()
+        && after.date == before.date
+        && after.createdAt == before.createdAt
+        && after.reason is string && after.reason.size() <= 200
+        && after.updatedAt is timestamp && after.updatedAt == request.time
+        && after.updatedAt > before.updatedAt
+        && after.diff(before).affectedKeys().hasOnly(['reason', 'updatedAt']);
+    }
+
+    match /appointments/{appointmentId} {
+      // Rules are not filters: a Patient list MUST filter patientUid == request.auth.uid.
+      allow get, list: if isAdmin()
+        || (isAppointmentPatient() && resource.data.patientUid == request.auth.uid);
+      // A booking is only valid as the complete three-write batch checked above.
+      allow create: if appointmentId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && request.resource.data.status == 'Confirmed'
+        && isBookingActor() && validAppointmentCreate(appointmentId);
+      // Patient self-cancel or Admin individual cancel; both require the coordinated slot release.
+      allow update: if resource.data.status == 'Confirmed'
+        && request.resource.data.status == 'Cancelled'
+        && validAppointmentCancellation(appointmentId)
+        && (isAdmin()
+          || (isAppointmentPatient() && resource.data.patientUid == request.auth.uid));
+      // No appointment is deletable, including by Admin.
+      allow delete: if false;
+    }
+
+    // Display-only serial sidecars. Allocation is serialized by one doctor/date counter;
+    // neither these paths nor their values participate in booking/cancellation authorization.
+    function validSerialCounter(doctorId, dateKey, first) {
+      let after = request.resource.data;
+      let mappingPath = /databases/$(database)/documents/doctorSlotInventory/$(doctorId)/dates/$(dateKey)/serials/$(after.lastSlotId);
+      let mapping = getAfter(mappingPath).data;
+      let slot = getAfter(/databases/$(database)/documents/doctorSlotInventory/$(doctorId)/dates/$(dateKey)/slots/$(after.lastSlotId)).data;
+      return after.keys().hasAll(['lastSerial', 'lastSlotId', 'updatedAt'])
+        && after.keys().hasOnly(['lastSerial', 'lastSlotId', 'updatedAt'])
+        && doctorId.matches('^[A-Za-z0-9_-]{1,128}$') && dateKey.matches('^[0-9]{1,16}$')
+        && after.lastSlotId is string && after.lastSlotId.matches('^s[0-9]{1,16}-[0-9]{1,16}$')
+        && after.lastSerial is int && after.lastSerial >= 1 && after.lastSerial <= 1000000
+        && (first ? after.lastSerial == 1 : after.lastSerial == resource.data.lastSerial + 1)
+        && after.updatedAt == request.time
+        && !exists(mappingPath)
+        && mapping.number == after.lastSerial && mapping.createdAt == request.time
+        && dateKey == dhakaDateKey(slot.appointmentDate)
+        && after.lastSlotId == inventorySlotId(slot.startAt, slot.endAt);
+    }
+
+    match /doctorSlotInventory/{doctorId}/dates/{dateKey} {
+      allow get: if isAdmin();
+      allow create: if isAdmin() && validSerialCounter(doctorId, dateKey, true);
+      allow update: if isAdmin() && validSerialCounter(doctorId, dateKey, false);
+      allow list, delete: if false;
+    }
+
+    match /doctorSlotInventory/{doctorId}/dates/{dateKey}/serials/{slotId} {
+      // No patient identity/contact information: legacy appointments retain this display lookup
+      // even after Doctor deactivation, while private inventory/locks stay protected as before.
+      allow get, list: if isAdmin() || isAppointmentPatient();
+      allow create: if isAdmin()
+        && doctorId.matches('^[A-Za-z0-9_-]{1,128}$') && dateKey.matches('^[0-9]{1,16}$')
+        && slotId.matches('^s[0-9]{1,16}-[0-9]{1,16}$')
+        && request.resource.data.keys().hasAll(['number', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['number', 'createdAt'])
+        && request.resource.data.number is int && request.resource.data.number >= 1 && request.resource.data.number <= 1000000
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/doctorSlotInventory/$(doctorId)/dates/$(dateKey)).data.lastSerial == request.resource.data.number
+        && getAfter(/databases/$(database)/documents/doctorSlotInventory/$(doctorId)/dates/$(dateKey)).data.lastSlotId == slotId
+        && getAfter(/databases/$(database)/documents/doctorSlotInventory/$(doctorId)/dates/$(dateKey)).data.updatedAt == request.time
+        && (exists(/databases/$(database)/documents/doctorSlotInventory/$(doctorId)/dates/$(dateKey))
+          ? request.resource.data.number == get(/databases/$(database)/documents/doctorSlotInventory/$(doctorId)/dates/$(dateKey)).data.lastSerial + 1
+          : request.resource.data.number == 1)
+        && existsAfter(/databases/$(database)/documents/doctorSlotInventory/$(doctorId)/dates/$(dateKey)/slots/$(slotId));
+      allow update, delete: if false;
+    }
+
+    match /doctorSlotInventory/{doctorId}/dates/{dateKey}/slots/{slotId} {
+      allow get, list: if isAdmin()
+        || (isAppointmentPatient()
+          && get(/databases/$(database)/documents/doctors/$(doctorId)).data.active == true);
+      allow create: if isAdmin()
+        && doctorId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && dateKey.matches('^[0-9]{1,16}$')
+        && slotId.matches('^s[0-9]{1,16}-[0-9]{1,16}$')
+        && validInventorySlotCreate(doctorId, dateKey, slotId);
+      allow update: if (isAdmin() && validInventorySlotUpdate())
+        || (isBookingActor()
+          && resource.data.status == 'available'
+          && request.resource.data.status == 'booked'
+          && validBookingSlotUpdate(doctorId, dateKey, slotId))
+        || ((isAdmin() || isBookingActor())
+          && resource.data.status == 'booked'
+          && request.resource.data.status != 'booked'
+          && validSlotCancellation(doctorId, dateKey, slotId));
+      allow delete: if false;
+
+      match /bookings/{bookingLockId} {
+        allow get, list: if isAdmin();
+        allow create: if bookingLockId.matches('^g[1-9][0-9]{0,9}$')
+          && validBookingLockCreate(doctorId, dateKey, slotId, bookingLockId);
+        // Locks are immutable history, including for Admin.
+        allow update, delete: if false;
+      }
+    }
+
+    match /doctorDateBlocks/{doctorId}/dates/{dateKey} {
+      allow get, list: if isAdmin();
+      allow create: if isAdmin()
+        && doctorId.matches('^[A-Za-z0-9_-]{1,128}$')
+        && dateKey.matches('^[0-9]{1,16}$')
+        && validDateBlockCreate(doctorId, dateKey);
+      allow update: if validDateBlockUpdate();
+      // Deleting a block is an explicit Admin action. Cancellation never deletes or unblocks it.
+      allow delete: if isAdmin();
+    }
+
+    // Emergency contacts are one private list document per Patient. Fixed c0..c9 slots let
+    // Rules enforce the 10-contact limit. phoneKeys maps each canonical number to its slot, so
+    // requiring a bijection makes duplicate numbers impossible without pairwise comparisons.
+    function validContactSlot(contacts, phoneKeys, key) {
+      let slot = contacts.get(key, null);
+      return !contacts.keys().hasAny([key])
+        || (slot is map
+          && slot.keys().hasOnly(['name', 'phone', 'phoneKey'])
+          && slot.name is string
+          && slot.name.matches('^[^\\x00-\\x1F\\x7F-\\x9F\\x{2028}\\x{2029}]{0,200}$')
+          && slot.phoneKey is string && slot.phoneKey.matches('^[0-9]{3,20}$')
+          && (slot.phone == slot.phoneKey || slot.phone == '+' + slot.phoneKey)
+          && phoneKeys.get(slot.phoneKey, '') == key);
+    }
+
+    function validContactList() {
+      let data = request.resource.data;
+      let contacts = data.contacts;
+      let phoneKeys = data.phoneKeys;
+      return data.keys().hasOnly(['contacts', 'phoneKeys', 'updatedAt'])
+        && contacts is map
+        && phoneKeys is map
+        && phoneKeys.size() == contacts.size()
+        && contacts.size() <= 10
+        && contacts.keys().hasOnly(['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9'])
+        && validContactSlot(contacts, phoneKeys, 'c0')
+        && validContactSlot(contacts, phoneKeys, 'c1')
+        && validContactSlot(contacts, phoneKeys, 'c2')
+        && validContactSlot(contacts, phoneKeys, 'c3')
+        && validContactSlot(contacts, phoneKeys, 'c4')
+        && validContactSlot(contacts, phoneKeys, 'c5')
+        && validContactSlot(contacts, phoneKeys, 'c6')
+        && validContactSlot(contacts, phoneKeys, 'c7')
+        && validContactSlot(contacts, phoneKeys, 'c8')
+        && validContactSlot(contacts, phoneKeys, 'c9')
+        && data.updatedAt is timestamp && data.updatedAt == request.time;
+    }
+    match /users/{uid}/emergencyContacts/list {
+      allow get: if isPatient() && request.auth.uid == uid;
+      allow create, update: if isPatient() && request.auth.uid == uid && validContactList();
+      allow list, delete: if false;
+    }
+    // Other doctor subcollections and all unrelated collections remain denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

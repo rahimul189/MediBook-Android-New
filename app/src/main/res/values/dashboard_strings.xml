@@ -1,0 +1,15 @@
+<resources>
+    <string name="next_appointment_heading">Next Appointment</string>
+    <string name="next_appointment_empty">No upcoming appointments.</string>
+    <string name="next_view_details">View Details</string>
+    <string name="next_time_range">%1$s – %2$s</string>
+    <string name="next_slot">Appointment Slot No.: %1$s</string>
+    <string name="dashboard_loading">Checking appointments…</string>
+    <string name="dashboard_error">Could not verify appointments. Please retry.</string>
+    <string name="dashboard_cached">Saved information · awaiting verification</string>
+    <string name="dashboard_firestore">Verified from appointments</string>
+    <string name="dashboard_current">Up to date</string>
+    <string name="dashboard_verifying_status">Checking current status…</string>
+    <string name="admin_confirmed_today">Confirmed Today</string>
+    <string name="admin_cancelled_today">Cancelled Today</string>
+</resources>

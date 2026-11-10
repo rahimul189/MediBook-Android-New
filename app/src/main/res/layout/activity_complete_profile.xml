@@ -1,0 +1,73 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true"
+    android:clipToPadding="false"
+    tools:context=".activities.auth.CompleteProfileActivity">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="24dp">
+        <include layout="@layout/view_auth_brand" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/complete_profile_title" android:textAppearance="@style/TextAppearance.MediBook.Heading" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:text="@string/complete_profile_subtitle"
+            android:textAppearance="@style/TextAppearance.MediBook.Body" />
+        <LinearLayout android:id="@+id/form" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:visibility="gone">
+            <TextView android:id="@+id/emailValue" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" android:saveEnabled="false"
+                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+            <com.google.android.material.textfield.TextInputLayout android:id="@+id/fullNameLayout"
+                style="@style/Widget.MediBook.Input" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/full_name_label">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/fullNameInput"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:saveEnabled="false"
+                    android:inputType="textPersonName|textCapWords" android:imeOptions="actionNext" android:autofillHints="personName" android:maxLength="100" android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout android:id="@+id/phoneLayout"
+                style="@style/Widget.MediBook.Input" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/phone_label">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/phoneInput"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:saveEnabled="false"
+                    android:inputType="phone" android:imeOptions="actionDone" android:autofillHints="phone" android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout android:id="@+id/dobLayout"
+                style="@style/Widget.MediBook.Input" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/profile_date_of_birth_label">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/dobInput"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:saveEnabled="false"
+                    android:inputType="none" android:clickable="true" android:cursorVisible="false" android:focusable="true"
+                    android:importantForAutofill="no" android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView android:id="@+id/ageValue" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/complete_profile_age_empty" android:saveEnabled="false"
+                android:textAppearance="@style/TextAppearance.MediBook.Body" />
+            <com.google.android.material.textfield.TextInputLayout android:id="@+id/genderLayout"
+                style="@style/Widget.MediBook.ExposedDropdown" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/profile_gender_label" app:endIconMode="dropdown_menu">
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView android:id="@+id/genderInput"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:saveEnabled="false"
+                    android:inputType="none" android:importantForAutofill="no" android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.button.MaterialButton android:id="@+id/saveButton"
+                style="@style/Widget.MediBook.PrimaryButton" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/complete_profile_save" />
+        </LinearLayout>
+        <com.google.android.material.progressindicator.CircularProgressIndicator android:id="@+id/loadingIndicator"
+            style="@style/Widget.MediBook.Progress.Action"
+            android:layout_width="32dp" android:layout_height="32dp" android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp" android:indeterminate="true" android:visibility="gone"
+            android:contentDescription="@string/profile_saving" app:indicatorSize="28dp" app:trackThickness="3dp" />
+        <TextView android:id="@+id/loadingLabel" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm" android:gravity="center" android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.MediBook.Body" android:visibility="gone" />
+        <TextView android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:accessibilityLiveRegion="polite" android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.MediBook.Body" android:textColor="@color/medibook_error" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="@string/google_existing_account_hint"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall" android:textColor="@color/medibook_text_secondary" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/signOutButton"
+            style="@style/Widget.MediBook.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/complete_profile_sign_out" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

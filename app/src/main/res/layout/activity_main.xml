@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/medibook_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        style="@style/Widget.MediBook.Progress.Page"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminate="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        android:text="@string/checking_session"
+        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+</LinearLayout>

@@ -1,0 +1,5 @@
+<resources>
+    <style name="Theme.MediBook" parent="Base.Theme.MediBook">
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

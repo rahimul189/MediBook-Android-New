@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+    android:paddingBottom="@dimen/space_md">
+    <com.google.android.material.button.MaterialButton android:id="@+id/remindersButton" style="@style/Widget.MediBook.TextButton"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_enable" android:visibility="gone" />
+    <com.google.android.material.textfield.TextInputLayout android:id="@+id/statusFilterLayout" style="@style/Widget.MediBook.ExposedDropdown"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/appointment_status_label">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView android:id="@+id/statusFilter"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="none"
+            android:importantForAutofill="no" android:contentDescription="@string/appointment_status_filter" android:maxLines="1" android:saveEnabled="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout android:id="@+id/doctorFilterLayout" style="@style/Widget.MediBook.Input"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/appointment_doctor_filter"
+        app:endIconMode="clear_text" android:visibility="gone">
+        <com.google.android.material.textfield.TextInputEditText android:id="@+id/doctorFilter" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:inputType="textPersonName" android:imeOptions="actionSearch"
+            android:maxLines="1" android:saveEnabled="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <LinearLayout android:id="@+id/dateFilters" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:visibility="gone">
+        <com.google.android.material.button.MaterialButton android:id="@+id/dateButton" style="@style/Widget.MediBook.PickerButton"
+            android:layout_width="match_parent" android:layout_height="wrap_content" app:icon="@drawable/ic_calendar_cross" android:text="@string/appointment_all_dates" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/clearDateButton" style="@style/Widget.MediBook.TextButton"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="end" android:text="@string/appointment_clear_date" />
+    </LinearLayout>
+    <com.google.android.material.button.MaterialButton android:id="@+id/refreshButton" style="@style/Widget.MediBook.TextButton"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/appointment_refresh" />
+    <com.google.android.material.progressindicator.CircularProgressIndicator android:id="@+id/progress" style="@style/Widget.MediBook.Progress.Page"
+        android:layout_width="@dimen/progress_page_host" android:layout_height="@dimen/progress_page_host" android:layout_gravity="center_horizontal" android:visibility="gone" />
+    <TextView android:id="@+id/message" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:padding="@dimen/space_md" android:accessibilityLiveRegion="polite" android:saveEnabled="false" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+    <com.google.android.material.button.MaterialButton android:id="@+id/emptyAction" style="@style/Widget.MediBook.SecondaryButton"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/appointment_find_doctor" android:visibility="gone" />
+</LinearLayout>

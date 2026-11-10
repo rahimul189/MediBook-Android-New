@@ -1,0 +1,15 @@
+<resources>
+    <style name="Widget.MediBook.GoogleButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">@color/google_button_text</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="icon">@drawable/ic_google</item>
+        <item name="iconTint">@null</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">12dp</item>
+        <item name="cornerRadius">24dp</item>
+        <item name="android:singleLine">false</item>
+    </style>
+</resources>

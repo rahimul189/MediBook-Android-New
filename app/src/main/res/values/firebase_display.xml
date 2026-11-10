@@ -1,0 +1,5 @@
+<resources>
+    <!-- Paste the exact RTDB HTTPS root URL from Firebase Console here; NOT an API key.
+         Blank falls back to google-services' database URL, or disables only live displays. -->
+    <string name="medibook_database_url" translatable="false">https://medibook-2c3a4-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</resources>

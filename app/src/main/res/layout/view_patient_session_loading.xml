@@ -1,0 +1,12 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:gravity="center_vertical" android:orientation="horizontal" android:padding="16dp">
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        style="@style/Widget.MediBook.Progress.Session"
+        android:layout_width="32dp" android:layout_height="32dp" android:indeterminate="true"
+        app:indicatorSize="24dp" app:trackThickness="3dp" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginStart="12dp" android:text="@string/checking_session"
+        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+</LinearLayout>

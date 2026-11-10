@@ -1,0 +1,102 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reminder_custom_hint"
+        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reminderDateButton"
+            style="@style/Widget.MediBook.SecondaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            app:icon="@drawable/ic_calendar_cross"
+            android:saveEnabled="false"
+            android:text="@string/reminder_date" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reminderTimeButton"
+            style="@style/Widget.MediBook.SecondaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:minHeight="48dp"
+            app:icon="@drawable/ic_schedule_clock"
+            android:saveEnabled="false"
+            android:text="@string/reminder_time" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/reminder_mode_label"
+        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+        android:textColor="@color/medibook_blue" />
+
+    <RadioGroup
+        android:id="@+id/reminderModeGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/modeNotification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/reminder_mode_notification" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/modeAlarm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target" android:text="@string/reminder_mode_alarm" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/reminderModeHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reminder_mode_help"
+        android:textAppearance="@style/TextAppearance.MediBook.Body"
+        android:textColor="@color/medibook_text_secondary" />
+
+    <TextView
+        android:id="@+id/reminderPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:accessibilityLiveRegion="polite"
+        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+        android:textColor="@color/medibook_blue" />
+
+    <TextView
+        android:id="@+id/reminderError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:accessibilityLiveRegion="polite"
+        android:textAppearance="@style/TextAppearance.MediBook.Error"
+        android:textColor="@color/medibook_error"
+        android:visibility="gone" />
+</LinearLayout>
+</androidx.core.widget.NestedScrollView>

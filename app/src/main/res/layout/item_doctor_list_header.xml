@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:id="@+id/directoryHeading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/doctor_directory_heading"
+        android:textAppearance="@style/TextAppearance.MediBook.Heading" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/doctor_directory_description"
+        android:textAppearance="@style/TextAppearance.MediBook.Body" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addDoctorButton"
+        style="@style/Widget.MediBook.PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_doctor_button" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/refreshButton"
+        style="@style/Widget.MediBook.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/doctor_refresh_button" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/operationProgress"
+        style="@style/Widget.MediBook.Progress.Action"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/operationStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:accessibilityLiveRegion="polite"
+        android:text="@string/doctor_status_updating"
+        android:textAppearance="@style/TextAppearance.MediBook.Body"
+        android:visibility="gone" />
+</LinearLayout>

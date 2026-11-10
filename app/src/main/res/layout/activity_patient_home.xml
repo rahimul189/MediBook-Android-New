@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" tools:context=".activities.patient.PatientHomeActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar" android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" android:background="@color/white"
+        app:title="@string/patient_home_title" app:titleTextColor="@color/medibook_text"
+        app:logo="@drawable/ic_medical_cross" app:menu="@menu/menu_patient_home" />
+
+    <TextView android:id="@+id/airplaneNotice" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:paddingStart="16dp" android:paddingEnd="16dp" android:paddingTop="8dp" android:paddingBottom="8dp" android:background="@color/medibook_blue_container"
+        android:text="@string/airplane_notice" android:textAppearance="@style/TextAppearance.MediBook.Body"
+        android:accessibilityLiveRegion="polite" android:visibility="gone" />
+
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <include android:id="@+id/sessionLoading" layout="@layout/view_patient_session_loading" />
+
+        <!-- Header, search, filters and results share one scroll; no nested RecyclerView. -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/patientContent" android:layout_width="match_parent"
+            android:layout_height="match_parent" android:clipToPadding="false"
+            android:padding="16dp" android:scrollbars="vertical" android:visibility="gone"
+            tools:listitem="@layout/item_patient_directory_header" tools:visibility="visible" />
+    </FrameLayout>
+</LinearLayout>

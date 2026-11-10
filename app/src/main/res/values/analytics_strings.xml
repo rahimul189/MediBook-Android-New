@@ -1,0 +1,19 @@
+<resources>
+    <string name="admin_overview_heading">Appointment Overview</string>
+    <string name="admin_today_label">Today’s Total Appointments</string>
+    <string name="admin_week_label">This Week’s Total Appointments</string>
+    <string name="admin_weekly_chart_title">Saturday to Friday</string>
+    <string name="admin_analytics_empty">No confirmed or completed appointments this week.</string>
+    <string name="admin_analytics_retry">Retry counts</string>
+    <string name="admin_today_caption">Excludes cancelled</string>
+    <string name="admin_week_caption">Saturday to Friday total</string>
+    <string-array name="admin_week_day_labels">
+        <item>Sat</item>
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+    </string-array>
+</resources>

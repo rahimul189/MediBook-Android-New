@@ -1,0 +1,100 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "publishedAnnouncements": { ".read": false, ".write": false },
+    "draftAnnouncements": { ".read": false, ".write": false },
+    "dashboards": {
+      "patients": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid && auth.token.admin == null",
+          ".write": "auth != null && auth.uid === $uid && auth.token.admin == null && $uid.matches(/^[A-Za-z0-9_-]{1,128}$/) && newData.exists()",
+          ".validate": "newData.hasChildren(['revision']) && (!data.hasChild('summary') || newData.hasChild('summary'))",
+          "revision": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= 1000000000 && (data.exists() ? (newData.val() === data.val() || newData.val() === data.val() + 1) : newData.val() === 1)" },
+          "summary": {
+            ".validate": "newData.hasChildren(['revision', 'checkedAt', 'appointmentId', 'startAt', 'endAt']) && ((data.exists() && newData.child('revision').val() === data.child('revision').val() && newData.child('checkedAt').val() === data.child('checkedAt').val() && newData.child('appointmentId').val() === data.child('appointmentId').val() && newData.child('startAt').val() === data.child('startAt').val() && newData.child('endAt').val() === data.child('endAt').val()) || (newData.child('revision').val() === newData.parent().child('revision').val() && (!data.exists() || newData.child('revision').val() > data.child('revision').val()) && newData.child('checkedAt').val() === now && ((newData.child('appointmentId').val() === '' && newData.child('startAt').val() === 0 && newData.child('endAt').val() === 0) || (newData.child('appointmentId').val() !== '' && newData.child('startAt').val() > now && newData.child('endAt').val() > newData.child('startAt').val()))))",
+            "revision": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= newData.parent().parent().child('revision').val()" },
+            "checkedAt": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() > 0 && newData.val() <= now" },
+            "appointmentId": { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_-]{0,128}$/)" },
+            "startAt": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 8640000000000000" },
+            "endAt": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 8640000000000000" },
+            "$other": { ".validate": false }
+          },
+          "$other": { ".validate": false }
+        }
+      },
+      "admin": {
+        ".read": "auth != null && auth.token.admin === true",
+        ".write": "auth != null && auth.token.admin === true && newData.exists()",
+        ".validate": "newData.hasChildren(['revision']) && (!data.hasChild('summary') || newData.hasChild('summary'))",
+        "revision": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= 1000000000 && (data.exists() ? (newData.val() === data.val() || newData.val() === data.val() + 1) : newData.val() === 1)" },
+        "summary": {
+          ".validate": "newData.hasChildren(['revision', 'checkedAt', 'weekStart', 'todayStart', 'days', 'todayTotal', 'weekTotal', 'confirmedToday', 'cancelledToday', 'completedToday']) && ((data.exists() && newData.child('revision').val() === data.child('revision').val() && newData.child('checkedAt').val() === data.child('checkedAt').val() && newData.child('weekStart').val() === data.child('weekStart').val() && newData.child('todayStart').val() === data.child('todayStart').val() && newData.child('todayTotal').val() === data.child('todayTotal').val() && newData.child('weekTotal').val() === data.child('weekTotal').val() && newData.child('confirmedToday').val() === data.child('confirmedToday').val() && newData.child('cancelledToday').val() === data.child('cancelledToday').val() && newData.child('completedToday').val() === data.child('completedToday').val() && newData.child('days/d0').val() === data.child('days/d0').val() && newData.child('days/d1').val() === data.child('days/d1').val() && newData.child('days/d2').val() === data.child('days/d2').val() && newData.child('days/d3').val() === data.child('days/d3').val() && newData.child('days/d4').val() === data.child('days/d4').val() && newData.child('days/d5').val() === data.child('days/d5').val() && newData.child('days/d6').val() === data.child('days/d6').val()) || (newData.child('revision').val() === newData.parent().child('revision').val() && (!data.exists() || newData.child('revision').val() > data.child('revision').val()) && newData.child('checkedAt').val() === now && newData.child('todayStart').val() === now - ((now + 21600000) % 86400000) && newData.child('weekStart').val() === newData.child('todayStart').val() - ((newData.child('todayStart').val() - 151200000) % 604800000))) && newData.child('weekTotal').val() === newData.child('days/d0').val() + newData.child('days/d1').val() + newData.child('days/d2').val() + newData.child('days/d3').val() + newData.child('days/d4').val() + newData.child('days/d5').val() + newData.child('days/d6').val() && newData.child('todayTotal').val() === newData.child('days').child('d' + ((newData.child('todayStart').val() - newData.child('weekStart').val()) / 86400000)).val() && newData.child('todayTotal').val() === newData.child('confirmedToday').val() + newData.child('completedToday').val()",
+          "revision": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= newData.parent().parent().child('revision').val()" },
+          "checkedAt": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() > 0 && newData.val() <= now" },
+          "weekStart": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0" },
+          "todayStart": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0" },
+          "days": {
+            ".validate": "newData.hasChildren(['d0', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6'])",
+            "$day": { ".validate": "$day.matches(/^d[0-6]$/) && newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 1000000" }
+          },
+          "todayTotal": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 1000000" },
+          "weekTotal": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 7000000" },
+          "confirmedToday": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 1000000" },
+          "cancelledToday": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 1000000" },
+          "completedToday": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 1000000" },
+          "$other": { ".validate": false }
+        },
+        "$other": { ".validate": false }
+      }
+    },
+    "display": {
+      "bookings": {
+        ".indexOn": ["changedAt"],
+        ".read": "auth != null && auth.token.admin === true && query.orderByChild === 'changedAt' && query.limitToLast > 0 && query.limitToLast <= 20",
+        "$id": {
+          ".read": "auth != null && auth.token.admin === true",
+          ".write": "auth != null && auth.token.admin === true && $id.matches(/^[A-Za-z0-9_-]{1,128}$/) && newData.exists()",
+          ".validate": "newData.hasChildren(['doctorId', 'dateKey', 'queueToken', 'status', 'changedAt']) && (!data.exists() || (newData.child('doctorId').val() === data.child('doctorId').val() && newData.child('dateKey').val() === data.child('dateKey').val() && newData.child('queueToken').val() === data.child('queueToken').val() && newData.child('changedAt').val() === data.child('changedAt').val()))",
+          "doctorId": { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_-]{1,128}$/)" },
+          "dateKey": { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{1,16}$/)" },
+          "queueToken": { ".validate": "newData.isString() && newData.val().matches(/^Q(000[1-9]|00[1-9][0-9]|0[1-9][0-9]{2}|1[0-3][0-9]{2}|14[0-3][0-9]|1440)$/)" },
+          "status": { ".validate": "newData.val() === 'Confirmed'" },
+          "changedAt": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() > 0 && newData.val() <= now + 60000" },
+          "$other": { ".validate": false }
+        }
+      },
+      "status": {
+        "$uid": {
+          ".indexOn": ["changedAt"],
+          ".read": "auth != null && (auth.token.admin === true || (auth.uid === $uid && auth.token.admin == null)) && query.orderByChild === 'changedAt' && query.limitToLast > 0 && query.limitToLast <= 20",
+          "$id": {
+            ".read": "auth != null && (auth.token.admin === true || (auth.uid === $uid && auth.token.admin == null))",
+            ".write": "auth != null && (auth.token.admin === true || (auth.uid === $uid && auth.token.admin == null)) && $uid.matches(/^[A-Za-z0-9_-]{1,128}$/) && $id.matches(/^[A-Za-z0-9_-]{1,128}$/) && newData.exists()",
+            ".validate": "newData.hasChildren(['doctorId', 'dateKey', 'queueToken', 'status', 'changedAt']) && (!data.exists() || (newData.child('doctorId').val() === data.child('doctorId').val() && newData.child('dateKey').val() === data.child('dateKey').val() && newData.child('queueToken').val() === data.child('queueToken').val() && newData.child('changedAt').val() >= data.child('changedAt').val()))",
+            "doctorId": { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_-]{1,128}$/)" },
+            "dateKey": { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{1,16}$/)" },
+            "queueToken": { ".validate": "newData.isString() && newData.val().matches(/^Q(000[1-9]|00[1-9][0-9]|0[1-9][0-9]{2}|1[0-3][0-9]{2}|14[0-3][0-9]|1440)$/)" },
+            "status": { ".validate": "newData.val() === 'Confirmed' || newData.val() === 'Cancelled'" },
+            "changedAt": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() > 0 && newData.val() <= now + 60000" },
+            "$other": { ".validate": false }
+          }
+        }
+      },
+      "queues": {
+        "$doctor": {
+          "$date": {
+            ".read": "auth != null && (auth.token.admin === true || auth.token.admin == null)",
+            "$token": {
+              ".write": "auth != null && auth.token.admin === true && $doctor.matches(/^[A-Za-z0-9_-]{1,128}$/) && $date.matches(/^[0-9]{1,16}$/) && $token.matches(/^Q(000[1-9]|00[1-9][0-9]|0[1-9][0-9]{2}|1[0-3][0-9]{2}|14[0-3][0-9]|1440)$/) && newData.exists()",
+              ".validate": "newData.hasChildren(['status', 'changedAt']) && (!data.exists() || newData.child('changedAt').val() >= data.child('changedAt').val())",
+              "status": { ".validate": "newData.val() === 'Confirmed' || newData.val() === 'Cancelled'" },
+              "changedAt": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() > 0 && newData.val() <= now + 60000" },
+              "$other": { ".validate": false }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Informational image page only: not clickable, not long-clickable, no listeners attached. -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:clickable="false" android:focusable="false" android:longClickable="false"
+    app:cardBackgroundColor="@color/white" app:cardCornerRadius="18dp"
+    app:cardElevation="0dp" app:strokeColor="@color/medibook_blue_container" app:strokeWidth="1dp">
+
+    <!-- fitCenter keeps every original card pixel visible; the 2:1 page already matches the asset. -->
+    <ImageView android:id="@+id/wellnessImage"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:importantForAccessibility="no" android:scaleType="fitCenter" />
+</com.google.android.material.card.MaterialCardView>

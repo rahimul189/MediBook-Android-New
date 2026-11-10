@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Text equivalents transcribed from the eleven original images; artwork is unchanged. -->
+    <string name="patient_wellness_heading">Health &amp; Wellness</string>
+    <string name="patient_wellness_counter">%1$d / %2$d</string>
+    <string name="patient_wellness_card_description">Health and wellness card %1$d of %2$d</string>
+    <string name="patient_wellness_accessible_card">%1$s. %2$s.</string>
+    <string name="wellness_hydrated_text">Health Tip. Stay Hydrated. Drink enough water throughout the day to stay healthy.</string>
+    <string name="wellness_diet_text">Health Tip. Eat a Balanced Diet. Include fruits, vegetables, whole grains and lean proteins.</string>
+    <string name="wellness_activity_text">Health Tip. Stay Physically Active. Do at least 30 minutes of moderate exercise most days of the week.</string>
+    <string name="wellness_sleep_text">Health Tip. Get Quality Sleep. Aim for 7–9 hours of restful sleep each night for better health.</string>
+    <string name="wellness_hygiene_text">Health Tip. Keep Good Hand Hygiene. Wash your hands regularly with soap and water to prevent infections.</string>
+    <string name="wellness_doctors_text">Meet Our Doctors. Consult Experienced Doctors. Our qualified and dedicated doctors are here for your health and well-being.</string>
+    <string name="wellness_consultation_text">Book a Consultation. Book Your Appointment. Choose a doctor, select a convenient time slot and confirm easily.</string>
+    <string name="wellness_find_text">MediBook Guide. Find a Doctor. Search by name, specialty or department to find the right doctor for you.</string>
+    <string name="wellness_booking_text">MediBook Guide. Book an Appointment. Select a date and time, then confirm your booking with a few taps.</string>
+    <string name="wellness_track_text">MediBook Guide. Track Your Appointments. View your upcoming and past appointments anytime in the app.</string>
+    <string name="wellness_reminders_text">MediBook Guide. Set Appointment Reminders. Get timely notifications or alarms so you never miss a visit.</string>
+</resources>

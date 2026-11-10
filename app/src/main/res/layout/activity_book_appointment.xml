@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+    <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" app:title="@string/appointment_book"
+        app:navigationIcon="@drawable/ic_arrow_back" app:navigationContentDescription="@string/navigate_back" />
+    <include android:id="@+id/sessionLoading" layout="@layout/view_patient_session_loading" />
+    <androidx.core.widget.NestedScrollView android:id="@+id/content" android:layout_width="match_parent"
+        android:layout_height="0dp" android:layout_weight="1" android:visibility="gone" android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+            <TextView android:id="@+id/doctorName" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.MediBook.Section" android:saveEnabled="false" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/appointment_booking_hint"
+                android:layout_marginTop="12dp" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/dateButton" style="@style/Widget.MediBook.PickerButton" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="@string/appointment_date" app:icon="@drawable/ic_calendar_cross" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/refreshButton" style="@style/Widget.MediBook.TextButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/appointment_refresh" />
+            <com.google.android.material.progressindicator.CircularProgressIndicator android:id="@+id/progress" style="@style/Widget.MediBook.Progress.Page" android:layout_width="48dp"
+                android:layout_height="48dp" android:layout_gravity="center_horizontal" android:indeterminate="true" android:visibility="gone" />
+            <TextView android:id="@+id/message" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:accessibilityLiveRegion="polite" android:textAppearance="@style/TextAppearance.MediBook.Body" android:saveEnabled="false" />
+            <TextView android:id="@+id/fee" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:saveEnabled="false" android:layout_marginTop="8dp"
+                android:textAppearance="@style/TextAppearance.MediBook.CardTitle" android:textColor="@color/medibook_teal_dark" />
+            <TextView android:id="@+id/availableTimesHeading" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_xxl"
+                android:text="@string/appointment_available_times"
+                android:textAppearance="@style/TextAppearance.MediBook.CardTitle" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_sm"
+                android:text="@string/appointment_slot_legend" android:textAppearance="@style/TextAppearance.MediBook.Body" />
+            <androidx.recyclerview.widget.RecyclerView android:id="@+id/slots" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:nestedScrollingEnabled="false" />
+            <TextView android:id="@+id/selectedTime" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg" android:padding="@dimen/space_md" android:background="@color/medibook_blue_container"
+                android:accessibilityLiveRegion="polite" android:saveEnabled="false" android:visibility="gone"
+                android:textAppearance="@style/TextAppearance.MediBook.BodyStrong" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/confirmButton" style="@style/Widget.MediBook.PrimaryButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/appointment_confirm" android:enabled="false" />
+            <TextView android:id="@+id/liveQueueTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+                android:text="@string/live_queue_title" android:textAppearance="@style/TextAppearance.Material3.TitleSmall" android:visibility="gone" />
+            <TextView android:id="@+id/liveQueue" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" android:saveEnabled="false" android:textAppearance="@style/TextAppearance.MediBook.Body" android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

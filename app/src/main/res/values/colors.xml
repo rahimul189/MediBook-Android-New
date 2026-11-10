@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="medibook_teal">#00BFA5</color>
+    <color name="medibook_teal_dark">#005C59</color>
+    <color name="medibook_blue">#1565C0</color>
+    <color name="medibook_blue_container">#EAF2FC</color>
+    <color name="medibook_background">#FFFFFF</color>
+    <color name="medibook_text">#163340</color>
+    <color name="medibook_text_secondary">#526671</color>
+    <color name="medibook_outline">#73888F</color>
+    <color name="medibook_error">#BA1A1A</color>
+    <color name="medibook_teal_container">#D8F3EF</color>
+    <color name="medibook_success">@color/medibook_teal_dark</color>
+    <color name="medibook_success_container">@color/medibook_teal_container</color>
+    <color name="medibook_warning">#7A4E00</color>
+    <color name="medibook_warning_container">#FFF3D6</color>
+    <color name="medibook_error_container">#FFDAD6</color>
+    <color name="medibook_on_error_container">#410002</color>
+    <color name="medibook_disabled_text">#61163340</color>
+    <color name="medibook_disabled_container">#1F163340</color>
+</resources>

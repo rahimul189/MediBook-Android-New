@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Local contact cache, account epoch and device-only reminder consent are not backup data. -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="patient_private.xml" />
+</full-backup-content>

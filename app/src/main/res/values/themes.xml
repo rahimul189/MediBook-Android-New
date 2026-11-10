@@ -1,0 +1,27 @@
+<resources>
+    <style name="Base.Theme.MediBook" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/medibook_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/medibook_blue_container</item>
+        <item name="colorOnPrimaryContainer">@color/medibook_blue</item>
+        <item name="colorSecondary">@color/medibook_teal</item>
+        <item name="colorOnSecondary">@color/medibook_text</item>
+        <item name="colorSecondaryContainer">@color/medibook_teal_container</item>
+        <item name="colorOnSecondaryContainer">@color/medibook_teal_dark</item>
+        <item name="fontFamily">sans</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/medibook_text</item>
+        <item name="colorOnSurfaceVariant">@color/medibook_text_secondary</item>
+        <item name="colorOutline">@color/medibook_outline</item>
+        <item name="colorError">@color/medibook_error</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorErrorContainer">@color/medibook_error_container</item>
+        <item name="colorOnErrorContainer">@color/medibook_on_error_container</item>
+        <item name="android:colorBackground">@color/medibook_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="Theme.MediBook" parent="Base.Theme.MediBook" />
+</resources>

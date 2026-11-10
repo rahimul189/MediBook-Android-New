@@ -1,0 +1,4 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/actionEditProfile" android:title="@string/profile_edit_title" app:showAsAction="never" />
+    <item android:id="@id/actionLogout" android:title="@string/logout_button" app:showAsAction="never" />
+</menu>

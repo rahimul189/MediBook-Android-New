@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp" android:height="108dp" android:viewportWidth="260" android:viewportHeight="140">
+    <path android:fillColor="#EAF2FC" android:pathData="M44,122Q10,93 33,56Q48,18 109,25Q154,-1 201,23Q245,47 227,93Q214,137 166,125Z" />
+    <!-- Appointment calendar: blank cells, not text. -->
+    <path android:fillColor="#1565C0" android:pathData="M143,36L214,36Q222,36 222,44L222,109Q222,117 214,117L143,117Q135,117 135,109L135,44Q135,36 143,36Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M141,57L216,57L216,108Q216,111 213,111L144,111Q141,111 141,108Z" />
+    <path android:strokeColor="#00BFA5" android:strokeWidth="6" android:strokeLineCap="round"
+        android:fillColor="#00000000" android:pathData="M154,30L154,42M202,30L202,42" />
+    <path android:fillColor="#D8F3EF" android:pathData="M150,67L162,67L162,79L150,79ZM172,67L184,67L184,79L172,79ZM194,67L206,67L206,79L194,79ZM150,89L162,89L162,101L150,101ZM172,89L184,89L184,101L172,101Z" />
+    <path android:strokeColor="#1565C0" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:fillColor="#00000000" android:pathData="M194,94L199,99L208,87" />
+    <!-- Doctor with white coat and stethoscope. -->
+    <path android:fillColor="#1565C0" android:pathData="M60,128L60,104L110,104L112,128ZM57,81Q59,66 75,65L98,65Q113,66 116,81L125,116L111,121L103,93L69,93L61,118L47,113Z" />
+    <path android:fillColor="#FFD8BC" android:pathData="M78,55L94,55L94,73L86,82L78,72ZM68,34Q68,19 86,19Q104,19 104,34L102,44Q100,59 86,59Q72,59 70,44Z" />
+    <path android:fillColor="#163340" android:pathData="M67,37L67,30Q68,14 86,14Q105,14 106,31L103,39L99,30Q84,35 74,28L72,39ZM77,40a1.5,1.5 0,1 0,3 0a1.5,1.5 0,1 0,-3 0M92,40a1.5,1.5 0,1 0,3 0a1.5,1.5 0,1 0,-3 0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M75,65L86,80L97,65L107,70L110,110L63,110L65,70Z" />
+    <path android:fillColor="#00BFA5" android:pathData="M97,78L101,78L101,82L105,82L105,86L101,86L101,90L97,90L97,86L93,86L93,82L97,82Z" />
+    <path android:strokeColor="#1565C0" android:strokeWidth="2.5" android:strokeLineCap="round"
+        android:fillColor="#00000000" android:pathData="M74,70L74,86Q74,94 82,94Q90,94 90,86L90,76M82,94L82,103L92,103" />
+    <path android:fillColor="#FFD8BC" android:pathData="M48,111L59,115L57,123Q52,129 47,124Q44,120 48,111ZM112,117L123,113L126,122Q124,129 118,127Z" />
+</vector>

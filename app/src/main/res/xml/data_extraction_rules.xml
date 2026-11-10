@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Applies to both cloud restore and device-to-device transfer on Android 12+. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="sharedpref" path="patient_private.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="patient_private.xml" />
+    </device-transfer>
+</data-extraction-rules>

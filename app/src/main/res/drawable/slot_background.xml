@@ -1,0 +1,26 @@
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="?attr/colorControlHighlight">
+    <item>
+        <selector>
+            <item android:state_enabled="false">
+                <shape>
+                    <solid android:color="@color/medibook_disabled_container" />
+                    <corners android:radius="@dimen/radius_control" />
+                </shape>
+            </item>
+            <item android:state_checked="true">
+                <shape>
+                    <solid android:color="@color/medibook_blue_container" />
+                    <stroke android:width="2dp" android:color="@color/medibook_blue" />
+                    <corners android:radius="@dimen/radius_control" />
+                </shape>
+            </item>
+            <item>
+                <shape>
+                    <solid android:color="@color/white" />
+                    <stroke android:width="1dp" android:color="@color/medibook_outline" />
+                    <corners android:radius="@dimen/radius_control" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>
